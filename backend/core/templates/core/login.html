@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+{% block title %}iHelp – Login{% endblock %}
+{% block content %}
+  <div class="min-h-[70vh] w-full grid place-items-center">
+    <div class="w-full max-w-md border rounded-2xl p-6 bg-white shadow-sm">
+      <h1 class="text-2xl font-semibold text-center">Entrar</h1>
+      <p class="text-sm text-gray-600 text-center">Selecione o tipo de conta e informe suas credenciais.</p>
+
+      <div class="mt-4 grid grid-cols-2 gap-2">
+        <a href="/login/?tipo=pessoa" class="px-3 py-2 rounded-md text-center border {% if request.GET.tipo == 'ong' %}bg-white text-gray-700{% else %}bg-blue-50 text-blue-700 border-blue-200{% endif %}">Pessoa</a>
+        <a href="/login/?tipo=ong" class="px-3 py-2 rounded-md text-center border {% if request.GET.tipo == 'ong' %}bg-blue-50 text-blue-700 border-blue-200{% else %}bg-white text-gray-700{% endif %}">ONG</a>
+      </div>
+
+      <form method="post" class="space-y-4 mt-4">
+        {% csrf_token %}
+        <input type="hidden" name="tipo" value="{% if request.GET.tipo == 'ong' %}ong{% else %}pessoa{% endif %}">
+        <div>
+          <label class="block text-sm font-medium mb-1" for="email">E-mail</label>
+          <input id="email" name="email" type="email" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="seu@email.com" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1" for="senha">Senha</label>
+          <input id="senha" name="senha" type="password" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="w-full px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Entrar</button>
+        <div class="text-center text-sm">
+          <span class="text-gray-600">Não tem conta?</span>
+          <a href="/cadastro/pessoa/" class="text-blue-700 hover:underline">Cadastre-se</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
