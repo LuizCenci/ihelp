@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 
 
 def home(request):
@@ -11,8 +12,13 @@ def login_view(request):
         email = request.POST.get('email')
         senha = request.POST.get('senha')
         if email and senha:
-            messages.success(request, 'Login simulado com sucesso! (frontend apenas)')
-            return redirect('home')
+            user = authenticate(request, username=email, password=senha)
+            if user:
+                login(request, user)
+                messages.success(request, 'Login efetuado com sucesso!')
+                return redirect('home')
+            else:
+                messages.error(request, 'E-mail ou senha inválidos.')
         else:
             messages.error(request, 'Preencha e-mail e senha.')
     return render(request, 'core/login.html')
