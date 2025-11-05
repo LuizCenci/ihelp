@@ -1,19 +1,70 @@
-{% extends "core/base.html" %}
+{% extends 'core/base.html' %}
+{% load widget_tweaks %}
+{% block title %}Cadastro de ONG | iHelp{% endblock %}
 {% block content %}
-<div class="container mt-4">
-  <h2>Cadastro de ONG</h2>
-  <form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-      <div class="mb-3">
-        <label>{{ field.label }}</label>
-        {{ field }}
-        {% if field.errors %}
-          <div class="text-danger">{{ field.errors }}</div>
-        {% endif %}
+<div class="min-h-[70vh] w-full flex items-center justify-center">
+  <div class="w-full max-w-lg bg-white border rounded-2xl p-8 shadow-2xl">
+    <h1 class="text-2xl font-semibold text-center mb-3 text-orange-800">Cadastre sua ONG</h1>
+    <form method="post" class="space-y-3">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div>
+        <label class="block text-sm font-semibold mb-1">{{ form.username.label }}</label>
+        {{ form.username|add_class:"input input-bordered w-full" }}
       </div>
-    {% endfor %}
-    <button class="btn btn-success">Cadastrar ONG</button>
-  </form>
+      <div>
+        <label class="block text-sm font-semibold mb-1">{{ form.email.label }}</label>
+        {{ form.email|add_class:"input input-bordered w-full" }}
+      </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1">{{ form.phone_number.label }}</label>
+        {{ form.phone_number|add_class:"input input-bordered w-full" }}
+      </div>
+      <div class="grid gap-3 grid-cols-1 sm:grid-cols-3">
+        <div>
+          <label class="block text-sm font-semibold mb-1">{{ form.country.label }}</label>
+          {{ form.country|add_class:"input input-bordered w-full" }}
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">{{ form.state.label }}</label>
+          {{ form.state|add_class:"input input-bordered w-full" }}
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">{{ form.city.label }}</label>
+          {{ form.city|add_class:"input input-bordered w-full" }}
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1">{{ form.cnpj.label }}</label>
+        {{ form.cnpj|add_class:"input input-bordered w-full" }}
+      </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1">{{ form.site.label }}</label>
+        {{ form.site|add_class:"input input-bordered w-full" }}
+      </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1">{{ form.address.label }}</label>
+        {{ form.address|add_class:"input input-bordered w-full" }}
+      </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1">{{ form.description.label }}</label>
+        {{ form.description|add_class:"input input-bordered w-full" }}
+      </div>
+      <div class="grid gap-3 grid-cols-2">
+        <div>
+          <label class="block text-sm font-semibold mb-1">{{ form.password1.label }}</label>
+          {{ form.password1|add_class:"input input-bordered w-full" }}
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1">{{ form.password2.label }}</label>
+          {{ form.password2|add_class:"input input-bordered w-full" }}
+        </div>
+      </div>
+      <button type="submit" class="w-full mt-2 btn btn-primary text-lg bg-orange-600 hover:bg-orange-700 border-none">Cadastrar ONG</button>
+    </form>
+    <div class="mt-5 text-center text-sm">
+      Já tem conta? <a href="{% url 'ihelp:login' %}" class="text-orange-900 hover:underline">Entrar</a>
+    </div>
+  </div>
 </div>
 {% endblock %}

@@ -57,14 +57,36 @@ class CustomUserChangeForm(forms.ModelForm):
 # VOLUNTÁRIO
 # =============================
 class VolunteerRegisterForm(forms.ModelForm):
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    cpf = forms.CharField(max_length=11, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    accept_announcements = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    password1 = forms.CharField(
+        label="Defina sua senha",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    password2 = forms.CharField(
+        label="Confirme sua senha",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    cpf = forms.CharField(
+        label="CPF",
+        max_length=11,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    accept_announcements = forms.BooleanField(
+        label="Aceitar receber avisos?",
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
 
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'phone_number', 'country', 'state', 'city']
+        labels = {
+            'username': 'Nome',
+            'email': 'E-mail',
+            'phone_number': 'Telefone',
+            'country': 'País',
+            'state': 'Estado',
+            'city': 'Cidade',
+        }
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -75,7 +97,8 @@ class VolunteerRegisterForm(forms.ModelForm):
         }
 
     def clean_password2(self):
-        p1, p2 = self.cleaned_data.get('password1'), self.cleaned_data.get('password2')
+        p1 = self.cleaned_data.get('password1')
+        p2 = self.cleaned_data.get('password2')
         if p1 != p2:
             raise forms.ValidationError("As senhas não coincidem.")
         return p2
@@ -86,7 +109,6 @@ class VolunteerRegisterForm(forms.ModelForm):
         user.set_password(self.cleaned_data['password1'])
         if commit:
             user.save()
-            # cria o perfil vinculado
             PersonProfile.objects.create(
                 user=user,
                 name=user.username,
@@ -96,20 +118,51 @@ class VolunteerRegisterForm(forms.ModelForm):
         return user
 
 
+
 # =============================
 # ONG
 # =============================
 class OngRegisterForm(forms.ModelForm):
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    cnpj = forms.CharField(max_length=18, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    site = forms.URLField(required=False, widget=forms.URLInput(attrs={'class': 'form-control'}))
-    address = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2}))
-    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}))
+    password1 = forms.CharField(
+        label="Defina sua senha",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    password2 = forms.CharField(
+        label="Confirme sua senha",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    cnpj = forms.CharField(
+        label="CNPJ",
+        max_length=18,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    site = forms.URLField(
+        label="Site (opcional)",
+        required=False,
+        widget=forms.URLInput(attrs={'class': 'form-control'})
+    )
+    address = forms.CharField(
+        label="Endereço",
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2})
+    )
+    description = forms.CharField(
+        label="Descrição da ONG",
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
+    )
 
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'phone_number', 'country', 'state', 'city']
+        labels = {
+            'username': 'Nome da ONG',
+            'email': 'E-mail de contato',
+            'phone_number': 'Telefone',
+            'country': 'País',
+            'state': 'Estado',
+            'city': 'Cidade',
+        }
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -120,7 +173,8 @@ class OngRegisterForm(forms.ModelForm):
         }
 
     def clean_password2(self):
-        p1, p2 = self.cleaned_data.get('password1'), self.cleaned_data.get('password2')
+        p1 = self.cleaned_data.get('password1')
+        p2 = self.cleaned_data.get('password2')
         if p1 != p2:
             raise forms.ValidationError("As senhas não coincidem.")
         return p2
@@ -140,6 +194,7 @@ class OngRegisterForm(forms.ModelForm):
                 description=self.cleaned_data.get('description')
             )
         return user
+
 
 
 class CategoryForm(forms.ModelForm):

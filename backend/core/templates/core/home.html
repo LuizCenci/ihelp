@@ -1,19 +1,25 @@
 {% extends 'core/base.html' %}
-{% block title %}iHelp – Início{% endblock %}
+{% block title %}iHelp – Buscar Ações{% endblock %}
 {% block content %}
-  <section class="w-full grid place-items-center">
-    <div class="w-full max-w-3xl bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-2xl p-8">
-      <h1 class="text-4xl font-semibold">iHelp</h1>
-      <p class="text-gray-700 mt-2">Conectando pessoas e ONGs para impacto real.</p>
-      <ul class="grid sm:grid-cols-3 gap-3 mt-4 text-sm text-gray-700">
-        <li class="flex items-center gap-2">✅ Voluntariado facilitado</li>
-        <li class="flex items-center gap-2">✅ Transparência nas ações</li>
-        <li class="flex items-center gap-2">✅ Comunidade e impacto</li>
-      </ul>
-      <div class="flex gap-2 pt-4">
-        <a href="/login/" class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Entrar</a>
-        <a href="/cadastro/pessoa/" class="px-4 py-2 rounded-md border hover:bg-gray-100">Cadastrar</a>
-      </div>
-    </div>
-  </section>
+<div class="w-full flex justify-center py-10 px-4">
+  <form method="get" class="bg-white shadow-lg rounded-xl flex flex-col md:flex-row gap-4 w-full max-w-6xl p-5">
+    <input
+      type="text"
+      name="q"
+      class="flex-1 border rounded-lg px-4 py-3 focus:outline-none focus:border-black text-lg"
+      placeholder="Buscar por palavra-chave..."
+      autocomplete="off"
+    />
+    <select name="tipo" class="min-w-[220px] border rounded-lg px-4 py-3 text-lg focus:outline-none focus:border-black">
+      <option value="">Tipo (Todos)</option>
+      <option value="voluntariado">Voluntariado</option>
+      <option value="doacao">Doação</option>
+      <option value="adocao">Adoção</option>
+    </select>
+    <select name="ods" class="min-w-[220px] border rounded-lg px-4 py-3 text-lg focus:outline-none focus:border-black">
+      <option value="">Categoria ODS (Todas)</option>
+      <option value="ods1">ODS 1</option>
+    </select>
+  </form>
+</div>
 {% endblock %}

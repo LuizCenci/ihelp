@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import *
 
 def home(request):
@@ -22,6 +22,12 @@ def login_view(request):
         else:
             messages.error(request, 'Preencha e-mail e senha.')
     return render(request, 'core/login.html')
+
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Logout realizado com sucesso!")
+    return redirect('ihelp:home')
 
 
 def cadastro_pessoa(request):
@@ -48,3 +54,6 @@ def cadastro_ong(request):
     else:
         form = OngRegisterForm()
     return render(request, 'core/cadastro_ong.html', {'form': form})
+
+def cadastro_escolha(request):
+    return render(request, 'core/cadastro_escolha.html')
