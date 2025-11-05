@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from .forms import *
 
 def home(request):
@@ -57,3 +58,21 @@ def cadastro_ong(request):
 
 def cadastro_escolha(request):
     return render(request, 'core/cadastro_escolha.html')
+
+@login_required
+def criacao_post_vaga(request):
+    if getattr(request.user, 'role', None) != Role.ONG:
+        messages.error(request, 'Apenas ONGs podem criar postagens.')
+        return redirect('ihelp:home')
+    
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            form.save(ong=request.user)
+            messages.success(request, 'Post criado com sucesso!')
+            return redirect('ihelp:home')
+    
+    else:
+        form = PostForm()
+
+    return render(request, 'core/criacao_post_vaga.html', {'form': form})

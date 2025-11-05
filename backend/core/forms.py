@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.db import transaction
 from .models import (
     CustomUser, PersonProfile, OngProfile,
-    Category, Post, Comment, Application, Role
+    Category, Post, Comment, Application, Role, PostCategory
 )
 
 
@@ -210,14 +211,37 @@ class CategoryForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'description', 'type', 'status', 'categories']
+
+        fields = ['title', 'description', 'type']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'type': forms.TextInput(attrs={'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-select'}),
-            'categories': forms.SelectMultiple(attrs={'class': 'form-select'}),
+
         }
+
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.order_by('name'),
+        required=False,
+        widget=forms.SelectMultiple
+    )
+
+
+    def save(self, commit=True, ong=None, status='ABERTA'):
+        with transaction.atomic():
+            post = super().save(commit=False)
+            if ong is not None:
+                post.ong = ong
+                post.status = status
+            if commit:
+                post.save()
+            if commit:
+                selected = list(self.cleaned_data.get('categories', []))
+                PostCategory.objects.filter(post=post).delete()
+                PostCategory.objects.bulk_create(
+                    [PostCategory(post=post, category=c) for c in selected]
+                )
+            return post
 
 
 class CommentForm(forms.ModelForm):

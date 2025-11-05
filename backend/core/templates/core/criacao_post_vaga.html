@@ -1,0 +1,11 @@
+<html lang="pt-br">
+  <head><meta charset="utf-8"><title>Criar Postagem</title></head>
+  <body>
+    <h1>Nova Postagem</h1>
+    <form method="post" action="">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Publicar</button>
+    </form>
+  </body>
+</html>
