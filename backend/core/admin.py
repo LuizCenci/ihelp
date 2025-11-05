@@ -7,9 +7,7 @@ from .models import (
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 
-# ===========================
 # USUÁRIOS PERSONALIZADOS
-# ===========================
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
@@ -33,9 +31,7 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
-# ===========================
 # PERFIS
-# ===========================
 @admin.register(PersonProfile)
 class PersonProfileAdmin(admin.ModelAdmin):
     list_display = ('name', 'cpf', 'user', 'accept_announcements')
@@ -51,9 +47,7 @@ class OngProfileAdmin(admin.ModelAdmin):
     readonly_fields = ('is_approved',)
 
 
-# ===========================
 # CATEGORIAS
-# ===========================
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
@@ -61,9 +55,7 @@ class CategoryAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
 
-# ===========================
 # POSTS
-# ===========================
 class PostCategoryInline(admin.TabularInline):
     model = PostCategory
     extra = 1
@@ -75,14 +67,11 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ('status', 'type', 'categories')
     search_fields = ('title', 'description', 'ong__email')
     inlines = [PostCategoryInline]
-    filter_horizontal = ('categories',)
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
 
 
-# ===========================
 # COMENTÁRIOS
-# ===========================
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('user', 'post', 'created_at')
@@ -90,9 +79,7 @@ class CommentAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
 
 
-# ===========================
 # CANDIDATURAS
-# ===========================
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('volunteer', 'post', 'application_date', 'status')

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .models import (
     CustomUser, PersonProfile, OngProfile,
-    Category, Post, Comment, Application
+    Category, Post, Comment, Application, Role
 )
 
 
@@ -54,28 +54,92 @@ class CustomUserChangeForm(forms.ModelForm):
         fields = ['email', 'username', 'phone_number', 'country', 'state', 'city', 'role', 'is_active', 'is_staff']
 
 
-class PersonProfileForm(forms.ModelForm):
+# VOLUNTÁRIO
+# =============================
+class VolunteerRegisterForm(forms.ModelForm):
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    cpf = forms.CharField(max_length=11, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    accept_announcements = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+
     class Meta:
-        model = PersonProfile
-        fields = ['name', 'cpf', 'accept_announcements']
+        model = CustomUser
+        fields = ['username', 'email', 'phone_number', 'country', 'state', 'city']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'cpf': forms.TextInput(attrs={'class': 'form-control'}),
-            'accept_announcements': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'country': forms.TextInput(attrs={'class': 'form-control'}),
+            'state': forms.TextInput(attrs={'class': 'form-control'}),
+            'city': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+    def clean_password2(self):
+        p1, p2 = self.cleaned_data.get('password1'), self.cleaned_data.get('password2')
+        if p1 != p2:
+            raise forms.ValidationError("As senhas não coincidem.")
+        return p2
 
-class OngProfileForm(forms.ModelForm):
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = Role.VOLUNTEER
+        user.set_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+            # cria o perfil vinculado
+            PersonProfile.objects.create(
+                user=user,
+                name=user.username,
+                cpf=self.cleaned_data['cpf'],
+                accept_announcements=self.cleaned_data['accept_announcements']
+            )
+        return user
+
+
+# =============================
+# ONG
+# =============================
+class OngRegisterForm(forms.ModelForm):
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    cnpj = forms.CharField(max_length=18, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    site = forms.URLField(required=False, widget=forms.URLInput(attrs={'class': 'form-control'}))
+    address = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}))
+
     class Meta:
-        model = OngProfile
-        fields = ['ong_name', 'cnpj', 'site', 'address', 'description']
+        model = CustomUser
+        fields = ['username', 'email', 'phone_number', 'country', 'state', 'city']
         widgets = {
-            'ong_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'cnpj': forms.TextInput(attrs={'class': 'form-control'}),
-            'site': forms.URLInput(attrs={'class': 'form-control'}),
-            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'country': forms.TextInput(attrs={'class': 'form-control'}),
+            'state': forms.TextInput(attrs={'class': 'form-control'}),
+            'city': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+    def clean_password2(self):
+        p1, p2 = self.cleaned_data.get('password1'), self.cleaned_data.get('password2')
+        if p1 != p2:
+            raise forms.ValidationError("As senhas não coincidem.")
+        return p2
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = Role.ONG
+        user.set_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+            OngProfile.objects.create(
+                user=user,
+                ong_name=user.username,
+                cnpj=self.cleaned_data['cnpj'],
+                site=self.cleaned_data.get('site'),
+                address=self.cleaned_data.get('address'),
+                description=self.cleaned_data.get('description')
+            )
+        return user
 
 
 class CategoryForm(forms.ModelForm):

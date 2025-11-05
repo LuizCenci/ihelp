@@ -1,82 +1,19 @@
-{% extends 'core/base.html' %}
-{% block title %}iHelp – Cadastro ONG{% endblock %}
+{% extends "core/base.html" %}
 {% block content %}
-  <div class="min-h-[70vh] w-full grid place-items-center">
-    <div class="w-full max-w-3xl border rounded-2xl p-6 bg-white shadow-sm">
-      <h1 class="text-2xl font-semibold">Cadastro</h1>
-      <p class="text-sm text-gray-600">Selecione o tipo de conta e preencha os campos.</p>
-
-      <div class="mt-4 grid grid-cols-2 gap-2">
-        <a href="/cadastro/pessoa/" class="px-3 py-2 rounded-md text-center border bg-white text-gray-700">Pessoa</a>
-        <a href="/cadastro/ong/" class="px-3 py-2 rounded-md text-center border bg-blue-50 text-blue-700 border-blue-200">ONG</a>
+<div class="container mt-4">
+  <h2>Cadastro de ONG</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="mb-3">
+        <label>{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          <div class="text-danger">{{ field.errors }}</div>
+        {% endif %}
       </div>
-
-      <form method="post" class="space-y-6 mt-4">
-        {% csrf_token %}
-        <section class="grid md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium mb-1" for="nome">Nome da ONG*</label>
-            <input id="nome" name="nome" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="ONG Amparo" required>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1" for="cnpj">CNPJ*</label>
-            <input id="cnpj" name="cnpj" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="00.000.000/0000-00" required>
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-sm font-medium mb-1" for="sobre">Sobre</label>
-            <textarea id="sobre" name="sobre" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Descreva missão, visão e frentes de atuação."></textarea>
-          </div>
-        </section>
-
-        <section class="grid md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium mb-1" for="email">E-mail*</label>
-            <input id="email" name="email" type="email" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="contato@ong.org" required>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1" for="telefone">Telefone</label>
-            <input id="telefone" name="telefone" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="(xx) xxxx-xxxx">
-          </div>
-          <div class="md:col-span-2 grid md:grid-cols-3 gap-4">
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium mb-1" for="endereco">Endereço</label>
-              <input id="endereco" name="endereco" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Rua Exemplo, 123">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1" for="estado">Estado</label>
-              <input id="estado" name="estado" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="PR">
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1" for="cidade">Cidade</label>
-            <input id="cidade" name="cidade" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Curitiba">
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1" for="site">Site</label>
-            <input id="site" name="site" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://suaong.org">
-          </div>
-        </section>
-
-        <section class="grid md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium mb-1" for="senha">Senha*</label>
-            <input id="senha" name="senha" type="password" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" minlength="6" required>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1" for="confirmar">Confirmar senha*</label>
-            <input id="confirmar" name="confirmar" type="password" class="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" minlength="6" required>
-          </div>
-          <div class="md:col-span-2 flex items-center gap-2">
-            <input id="termos" name="termos" type="checkbox" class="h-4 w-4 rounded border-gray-300">
-            <label for="termos" class="text-sm">Concordo com os termos de uso e política de privacidade</label>
-          </div>
-        </section>
-
-        <div class="grid grid-cols-2 gap-3">
-          <button type="submit" class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Cadastrar ONG</button>
-          <a href="/" class="px-4 py-2 rounded-md border text-center hover:bg-gray-50">Cancelar</a>
-        </div>
-      </form>
-    </div>
-  </div>
+    {% endfor %}
+    <button class="btn btn-success">Cadastrar ONG</button>
+  </form>
+</div>
 {% endblock %}

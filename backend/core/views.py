@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-
+from .forms import *
 
 def home(request):
     return render(request, 'core/home.html')
@@ -16,7 +16,7 @@ def login_view(request):
             if user:
                 login(request, user)
                 messages.success(request, 'Login efetuado com sucesso!')
-                return redirect('home')
+                return redirect('ihelp:home')
             else:
                 messages.error(request, 'E-mail ou senha inválidos.')
         else:
@@ -26,40 +26,25 @@ def login_view(request):
 
 def cadastro_pessoa(request):
     if request.method == 'POST':
-        nome = request.POST.get('nomeCompleto')
-        email = request.POST.get('email')
-        cpf = request.POST.get('cpf')
-        senha = request.POST.get('senha')
-        confirmar = request.POST.get('confirmar')
-
-        if not all([nome, email, cpf, senha, confirmar]):
-            messages.error(request, 'Preencha os campos obrigatórios.')
-        elif senha != confirmar:
-            messages.error(request, 'As senhas não coincidem.')
-        else:
-            messages.success(request, 'Cadastro de Pessoa simulado! (frontend apenas)')
-            return redirect('home')
-
-    return render(request, 'core/cadastro_pessoa.html')
+        form = VolunteerRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Cadastro de voluntário realizado com sucesso!")
+            return redirect('ihelp:home')
+    else:
+        form = VolunteerRegisterForm()
+    return render(request, 'core/cadastro_pessoa.html', {'form': form})
 
 
 def cadastro_ong(request):
     if request.method == 'POST':
-        nome = request.POST.get('nome')
-        cnpj = request.POST.get('cnpj')
-        email = request.POST.get('email')
-        senha = request.POST.get('senha')
-        confirmar = request.POST.get('confirmar')
-        termos = request.POST.get('termos')  # 'on' se marcado
-
-        if not all([nome, cnpj, email, senha, confirmar]):
-            messages.error(request, 'Preencha os campos obrigatórios.')
-        elif senha != confirmar:
-            messages.error(request, 'As senhas não coincidem.')
-        elif termos != 'on':
-            messages.error(request, 'É necessário aceitar os termos.')
-        else:
-            messages.success(request, 'Cadastro de ONG simulado! (frontend apenas)')
-            return redirect('home')
-
-    return render(request, 'core/cadastro_ong.html')
+        form = OngRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Cadastro de ONG realizado com sucesso! Aguarde aprovação.")
+            return redirect('ihelp:home')
+    else:
+        form = OngRegisterForm()
+    return render(request, 'core/cadastro_ong.html', {'form': form})
