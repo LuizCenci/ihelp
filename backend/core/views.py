@@ -5,7 +5,10 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 
 def home(request):
-    return render(request, 'core/home.html')
+    anuncios = Post.objects.filter(status='ABERTA').order_by('-id')
+    print(anuncios)
+    context = {'anuncios': anuncios}
+    return render(request, 'core/home.html', context)
 
 
 def login_view(request):
