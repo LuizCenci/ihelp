@@ -1,11 +1,14 @@
-from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import (get_list_or_404, get_object_or_404, redirect,
+                              render)
+
 from .forms import *
 
+
 def home(request):
-    anuncios = Post.objects.filter(status='ABERTA').order_by('-id')
+    anuncios = []  # Model Post não definido ainda
     context = {'anuncios': anuncios}
     return render(request, 'core/home.html', context)
 

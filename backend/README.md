@@ -20,6 +20,36 @@ O backend atualmente implementa rotas e páginas para login e cadastro (Pessoa e
   - `templates/core/` — templates HTML.
   - `static/core/` — arquivos estáticos (CSS).
 
+
+## Usando mise para gerenciar o ambiente
+
+Se você utiliza o [mise](https://mise.jdx.dev/) (gerenciador de ambientes para múltiplas linguagens), pode garantir a versão correta do Python e isolar dependências facilmente:
+
+1. Instale o mise seguindo as instruções do site oficial.
+2. No diretório `backend`, defina a versão do Python desejada (exemplo: 3.11):
+  ```bash
+  mise use python@3.11
+  mise install
+  ```
+  Isso instalará o Python e criará um ambiente isolado para o projeto.
+3. Ative o ambiente (se necessário):
+  ```bash
+  mise activate
+  ```
+
+4. Caso o comando `pip` não esteja disponível após instalar o Python pelo mise, instale o pip manualmente:
+   ```bash
+   python -m ensurepip --upgrade
+   ```
+   Depois, instale as dependências normalmente:
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+5. Siga os passos de migração e execução abaixo.
+
+---
+
 ## Instalação e Execução
 
 1. Acesse o diretório `backend`:
