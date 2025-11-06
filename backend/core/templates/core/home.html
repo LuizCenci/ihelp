@@ -2,24 +2,20 @@
 {% block title %}iHelp – Buscar Ações{% endblock %}
 {% block content %}
 <div class="w-full flex justify-center py-10 px-4">
-  <form method="get" class="bg-white shadow-lg rounded-xl flex flex-col md:flex-row gap-4 w-full max-w-6xl p-5">
-    <input
-      type="text"
-      name="q"
-      class="flex-1 border rounded-lg px-4 py-3 focus:outline-none focus:border-black text-lg"
-      placeholder="Buscar por palavra-chave..."
-      autocomplete="off"
-    />
-    <select name="tipo" class="min-w-[220px] border rounded-lg px-4 py-3 text-lg focus:outline-none focus:border-black">
-      <option value="">Tipo (Todos)</option>
-      <option value="voluntariado">Voluntariado</option>
-      <option value="doacao">Doação</option>
-      <option value="adocao">Adoção</option>
-    </select>
-    <select name="ods" class="min-w-[220px] border rounded-lg px-4 py-3 text-lg focus:outline-none focus:border-black">
+  <form action="{% url 'ihelp:search' %}" method="get" class="bg-white shadow-lg rounded-xl flex flex-col md:flex-row gap-4 w-full max-w-6xl p-5">
+
+   <input type="search" class="flex-1 border rounded-lg px-4 py-3 focus:outline-none focus:border-black text-lg" name="q" value="{{ search_term }}">
+
+    <select name="ods" class="min-w-[220px] border rounded-lg px-4 py-3 text-lg focus:outline-none focus:border-black" multiple>
       <option value="">Categoria ODS (Todas)</option>
-      <option value="ods1">ODS 1</option>
+      {% for category in ods_categories %}
+        <option value="{{ category.id }}" {% if category.id|stringformat:'s' in selected_ods %}selected{% endif %}>
+          {{ category.name }}
+        </option>
+      {% endfor %}
     </select>
+
+    <button type="submit">Buscar</button>
   </form>
 </div>
 {% endblock %}
