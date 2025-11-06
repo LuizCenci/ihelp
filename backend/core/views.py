@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -6,9 +6,13 @@ from .forms import *
 
 def home(request):
     anuncios = Post.objects.filter(status='ABERTA').order_by('-id')
-    print(anuncios)
     context = {'anuncios': anuncios}
     return render(request, 'core/home.html', context)
+
+def post_page(request, id):
+    anuncio = get_object_or_404(Post, pk=id)
+
+    return render(request, 'core/anuncio_view.html', {'anuncio': anuncio})
 
 
 def login_view(request):

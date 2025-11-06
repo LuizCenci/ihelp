@@ -9,4 +9,5 @@ urlpatterns = [
     path('cadastro/ong/', views.cadastro_ong, name='cadastro_ong'),
     path('cadastro/', views.cadastro_escolha, name='cadastro_escolha'),
     path('criar-anuncio/', views.criacao_post_vaga, name='criacao_post_vaga'),
+    path('vagas/<int:id>', views.post_page, name='post_page'),
 ]
