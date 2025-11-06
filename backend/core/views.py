@@ -1,20 +1,26 @@
-from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import (get_list_or_404, get_object_or_404, redirect,
+                              render)
+
 from .forms import *
 
 def home(request):
-    anuncios = Post.objects.filter(status='ABERTA').order_by('-id')
+
+    return render(request, 'core/home.html')
+
+def home_vagas(request):
+    anuncios = PostAnnouncement.objects.filter(status='ABERTA').order_by('-id')
     
     selected_ods = request.GET.getlist('ods')
     context = {'anuncios': anuncios,'ods_categories': Category.objects.order_by('name'), 'selected_ods': [str(i) for i in selected_ods],}
     return render(request, 'core/home.html', context)
 
 def post_page(request, id):
-    anuncio = get_object_or_404(Post, pk=id)
+    anuncio = get_object_or_404(PostAnnouncement, pk=id)
 
     return render(request, 'core/anuncio_view.html', {'anuncio': anuncio})
 
@@ -23,7 +29,7 @@ def search(request):
     search_term = request.GET.get('q', '').strip()
     ods = request.GET.getlist('ods', '')
     
-    anuncios  = Post.objects.all()
+    anuncios  = PostAnnouncement.objects.all()
 
     if search_term:
         anuncios =anuncios.filter(
@@ -100,13 +106,13 @@ def criacao_post_vaga(request):
         return redirect('ihelp:home')
     
     if request.method == "POST":
-        form = PostForm(request.POST)
+        form = PostAnnouncementForm(request.POST)
         if form.is_valid():
             form.save(ong=request.user)
             messages.success(request, 'Post criado com sucesso!')
             return redirect('ihelp:home')
     
     else:
-        form = PostForm()
+        form = PostAnnouncementForm()
 
     return render(request, 'core/criacao_post_vaga.html', {'form': form})

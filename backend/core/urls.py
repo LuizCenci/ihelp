@@ -3,6 +3,7 @@ from . import views
 app_name = 'ihelp'
 urlpatterns = [
     path('', views.home, name='home'),
+    path('vagas/', views.home_vagas, name='home_vagas'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('cadastro/pessoa/', views.cadastro_pessoa, name='cadastro_pessoa'),

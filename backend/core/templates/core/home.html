@@ -17,5 +17,10 @@
 
     <button type="submit">Buscar</button>
   </form>
+  <div>
+    {%for item in anuncios%}
+      {{item}}
+    {%endfor%}
+  </div>
 </div>
 {% endblock %}
