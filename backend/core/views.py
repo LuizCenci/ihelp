@@ -9,7 +9,6 @@ from django.shortcuts import (get_list_or_404, get_object_or_404, redirect,
 from .forms import *
 
 def home(request):
-
     return render(request, 'core/home.html')
 
 def home_vagas(request):
