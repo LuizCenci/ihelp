@@ -11,7 +11,7 @@ from .models import PostAnnouncement, Role
 
 def home(request):
     """Visualizar feed de postagens."""
-    return HttpResponse('-')
+    return redirect('ihelp:home_vagas')
 
 
 def home_vagas(request):
