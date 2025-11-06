@@ -1,3 +1,21 @@
+## Contas padrão para login rápido
+
+Após rodar as migrations, crie contas de teste executando:
+
+```bash
+python manage.py create_default_users
+```
+
+Contas criadas:
+
+- Voluntário:  
+  email: voluntario@ihelp.com  
+  senha: 123456
+- ONG:  
+  email: ong@ihelp.com  
+  senha: 123456
+
+Use esses dados para login rápido no sistema.
 
 # Backend (Django) do projeto ihelp
 
