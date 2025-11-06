@@ -1,9 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import (
-    CustomUser, PersonProfile, OngProfile,
-    Category, Post, PostCategory, Comment, Application, Role
-)
+from .models import *
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 
@@ -44,7 +41,6 @@ class OngProfileAdmin(admin.ModelAdmin):
     list_display = ('ong_name', 'cnpj', 'user', 'is_approved')
     search_fields = ('ong_name', 'cnpj', 'user__email')
     list_filter = ('is_approved',)
-    readonly_fields = ('is_approved',)
 
 
 # CATEGORIAS
@@ -61,14 +57,49 @@ class PostCategoryInline(admin.TabularInline):
     extra = 1
 
 
-@admin.register(Post)
-class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'type', 'status', 'ong', 'created_at')
-    list_filter = ('status', 'type', 'categories')
+@admin.register(PostAnnouncement)
+class PostAnnouncementAdmin(admin.ModelAdmin):
+    list_display = ('title', 'status', 'ong', 'created_at')
+    list_filter = ('status', 'categories')
     search_fields = ('title', 'description', 'ong__email')
     inlines = [PostCategoryInline]
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
+
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'description', 'photo', 'status', 'ong')
+        }),
+        ('Datas', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    readonly_fields = ('created_at', 'updated_at')
+
+
+# ============================================
+# ADMIN: PostFeed
+# ============================================
+@admin.register(PostFeed)
+class PostFeedAdmin(admin.ModelAdmin):
+    list_display = ('ong', 'created_at')
+    search_fields = ('description', 'ong__email')
+    date_hierarchy = 'created_at'
+    ordering = ('-created_at',)
+
+    fieldsets = (
+        (None, {
+            'fields': ('description', 'photo', 'ong')
+        }),
+        ('Datas', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    readonly_fields = ('created_at', 'updated_at')
 
 
 # COMENTÁRIOS

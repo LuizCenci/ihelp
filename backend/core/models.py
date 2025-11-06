@@ -2,7 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 
-#USERS MANAGER
+# ============================================
+# USERS MANAGER
+# ============================================
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -25,14 +27,18 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-#ROLES
+# ============================================
+# ROLES
+# ============================================
 class Role(models.TextChoices):
     ADMIN = 'ADMIN', 'Administrador'
     ONG = 'ONG', 'ONG'
     VOLUNTEER = 'VOLUNTEER', 'Voluntário'
 
 
-#USER
+# ============================================
+# USER
+# ============================================
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20)
@@ -58,7 +64,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return f"{self.username} ({self.get_role_display()})"
 
 
-#PROFILE - PERSON
+# ============================================
+# PROFILE - PERSON
+# ============================================
 class PersonProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='person_profile')
     name = models.CharField(max_length=255)
@@ -69,7 +77,9 @@ class PersonProfile(models.Model):
         return self.name
 
 
-#PROFILE - ONG
+# ============================================
+# PROFILE - ONG
+# ============================================
 class OngProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='ong_profile')
     ong_name = models.CharField(max_length=255)
@@ -83,7 +93,9 @@ class OngProfile(models.Model):
         return self.ong_name
 
 
-#POST CATEGORY
+# ============================================
+# CATEGORY
+# ============================================
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
@@ -92,8 +104,10 @@ class Category(models.Model):
         return self.name
 
 
-#POST
-class Post(models.Model):
+# ============================================
+# POST ANNOUNCEMENT
+# ============================================
+class PostAnnouncement(models.Model):
     STATUS_CHOICES = [
         ('ABERTA', 'Aberta'),
         ('FECHADA', 'Fechada'),
@@ -101,10 +115,10 @@ class Post(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField()
-    type = models.CharField(max_length=20)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ABERTA')
-    ong = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='posts')
-    categories = models.ManyToManyField(Category, through='PostCategory', related_name='posts')
+    ong = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='announcements')
+    photo = models.CharField(max_length=255, blank=True, null=True)
+    categories = models.ManyToManyField('Category', through='PostCategory', related_name='announcements')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
@@ -112,30 +126,50 @@ class Post(models.Model):
         return self.title
 
 
-#POST CATEGORY N-N
+# ============================================
+# POST FEED
+# ============================================
+class PostFeed(models.Model):
+    description = models.TextField()
+    photo = models.CharField(max_length=255, blank=True, null=True)
+    ong = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='feeds')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+
+    def __str__(self):
+        return f"Post da ONG {self.ong.username}"
+
+
+# ============================================
+# POST CATEGORY (N-N)
+# ============================================
 class PostCategory(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(PostAnnouncement, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('post', 'category')
 
 
-#COMMENTS 
+# ============================================
+# COMMENTS
+# ============================================
 class Comment(models.Model):
     content = models.TextField()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(PostFeed, on_delete=models.CASCADE, related_name='comments')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Comentário de {self.user.username} em {self.post.title}"
 
 
-#APPLICATIONS
+# ============================================
+# APPLICATIONS
+# ============================================
 class Application(models.Model):
     volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='applications')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='applications')
+    post = models.ForeignKey(PostAnnouncement, on_delete=models.CASCADE, related_name='applications')
     application_date = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(null=True, blank=True)  # Aceito / Rejeitado
 

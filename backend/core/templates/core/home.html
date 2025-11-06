@@ -21,5 +21,10 @@
       <option value="ods1">ODS 1</option>
     </select>
   </form>
+  <div>
+    {%for item in anuncios%}
+      {{item}}
+    {%endfor%}
+  </div>
 </div>
 {% endblock %}
