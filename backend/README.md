@@ -68,30 +68,27 @@ Se você utiliza o [mise](https://mise.jdx.dev/) (gerenciador de ambientes para 
 
 ---
 
+
 ## Instalação e Execução
 
 1. Acesse o diretório `backend`:
-  ```bash
-  cd backend
-  ```
-2. Crie e ative um ambiente virtual:
-  ```bash
-  python3 -m venv .venv
-  source .venv/bin/activate
-  ```
+   ```bash
+   cd backend
+   ```
+2. Garanta que o ambiente Python está ativado pelo mise/asdf (veja instruções acima).
 3. Instale as dependências:
-  ```bash
-  pip install --upgrade pip
-  pip install -r requirements.txt
-  ```
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
 4. Execute as migrações iniciais:
-  ```bash
-  python manage.py migrate
-  ```
+   ```bash
+   python manage.py migrate
+   ```
 5. Inicie o servidor de desenvolvimento:
-  ```bash
-  python manage.py runserver
-  ```
+   ```bash
+   python manage.py runserver
+   ```
 6. Acesse em: http://127.0.0.1:8000/
 
 ### Observações
