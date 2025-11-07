@@ -1,25 +1,25 @@
 {% extends 'core/base.html' %}
 {% block title %}Como deseja se cadastrar? | iHelp{% endblock %}
 {% block content %}
-<div class="min-h-[70vh] flex items-center justify-center">
-  <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 max-w-2xl w-full">
-    <a href="{% url 'ihelp:cadastro_pessoa' %}" class="transition hover:-translate-y-1 duration-150 hover:shadow-xl border-2 rounded-2xl bg-gradient-to-br from-green-50 via-white to-green-100 flex flex-col items-center py-12 px-5 group">
-      <div class="flex items-center mb-3">
-        <div class="text-3xl text-green-600 font-bold bg-white border-4 border-green-200 shadow rounded-full w-14 h-14 grid place-items-center mb-3">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="w-7 h-7"><path d="M12 14c2.97 0 4.5-2 c1.5 0 2.5-1 2.5-2.5S15 9 14 9h-4c-1 0-2 .5-2.5 2C6 12 7.5 14 12 14Z" /><circle cx="12" cy="7" r="4" /></svg>
+<div class="min-h-[70vh] flex items-center justify-center py-8">
+  <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-2xl w-full">
+    <a href="{% url 'ihelp:cadastro_pessoa' %}" class="transition-all duration-200 hover:-translate-y-1 hover:shadow-lg border-2 border-green-200 rounded-2xl bg-gradient-to-br from-green-50 via-white to-green-100 flex flex-col items-center py-12 px-6 group">
+      <div class="flex items-center mb-4">
+        <div class="text-3xl text-green-600 font-bold bg-white border-4 border-green-200 shadow-md rounded-full w-16 h-16 grid place-items-center">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="w-8 h-8"><path d="M12 14c2.97 0 4.5-2 c1.5 0 2.5-1 2.5-2.5S15 9 14 9h-4c-1 0-2 .5-2.5 2C6 12 7.5 14 12 14Z" /><circle cx="12" cy="7" r="4" /></svg>
         </div>
       </div>
-      <div class="text-2xl font-semibold mb-1 text-green-900">Quero ser Voluntário</div>
-      <div class="text-gray-700 text-center">Cadastre-se para ajudar, participar de ações e encontrar oportunidades.</div>
+      <div class="text-2xl font-semibold mb-2 text-green-800 group-hover:text-green-900 transition-colors">Quero ser Voluntário</div>
+      <div class="text-gray-600 text-center text-sm leading-relaxed">Cadastre-se para ajudar, participar de ações e encontrar oportunidades.</div>
     </a>
-    <a href="{% url 'ihelp:cadastro_ong' %}" class="transition hover:-translate-y-1 duration-150 hover:shadow-xl border-2 rounded-2xl bg-gradient-to-br from-orange-50 via-white to-orange-100 flex flex-col items-center py-12 px-5 group">
-      <div class="flex items-center mb-3">
-        <div class="text-3xl text-orange-600 font-bold bg-white border-4 border-orange-200 shadow rounded-full w-14 h-14 grid place-items-center mb-3">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="w-7 h-7"><path d="M12 4v16m8-8H4" /></svg>
+    <a href="{% url 'ihelp:cadastro_ong' %}" class="transition-all duration-200 hover:-translate-y-1 hover:shadow-lg border-2 border-orange-200 rounded-2xl bg-gradient-to-br from-orange-50 via-white to-orange-100 flex flex-col items-center py-12 px-6 group">
+      <div class="flex items-center mb-4">
+        <div class="text-3xl text-orange-600 font-bold bg-white border-4 border-orange-200 shadow-md rounded-full w-16 h-16 grid place-items-center">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="w-8 h-8"><path d="M12 4v16m8-8H4" /></svg>
         </div>
       </div>
-      <div class="text-2xl font-semibold mb-1 text-orange-900">Quero cadastrar minha ONG</div>
-      <div class="text-gray-700 text-center">Cadastre sua organização para receber voluntários e publicar ações sociais.</div>
+      <div class="text-2xl font-semibold mb-2 text-orange-800 group-hover:text-orange-900 transition-colors">Quero cadastrar minha ONG</div>
+      <div class="text-gray-600 text-center text-sm leading-relaxed">Cadastre sua organização para receber voluntários e publicar ações sociais.</div>
     </a>
   </div>
 </div>

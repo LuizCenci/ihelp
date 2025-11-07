@@ -13,7 +13,7 @@
 <body class="min-h-screen flex flex-col bg-gray-50 text-gray-900">
   <header class="sticky top-0 z-10 bg-white/80 backdrop-blur border-b">
     <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2 font-semibold">
+      <a href="{% url 'ihelp:home' %}" class="flex items-center gap-2 font-semibold">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2">
           <path d="M12 21s-6-4.35-6-9a6 6 0 1 1 12 0c0 4.65-6 9-6 9Z" />
@@ -21,17 +21,19 @@
         </svg>
         iHelp
       </a>
-      <nav class="hidden sm:flex items-center gap-2">
+      <nav class="hidden sm:flex items-center gap-3">
         {% if request.user.is_authenticated %}
-
-        <span class="px-3 py-1.5">{{ request.user.username }}</span>
+        {% if request.user.role == 'ONG' %}
+        <a href="{% url 'ihelp:criacao_post_vaga' %}"
+          class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">Criar Anúncio</a>
+        {% endif %}
+        <span class="px-3 py-1.5 text-sm text-gray-700">{{ request.user.username }}</span>
         <a href="{% url 'ihelp:logout' %}"
-          class="px-3 py-1.5 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300">Sair</a>
+          class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">Sair</a>
         {% else %}
-        <a href="{% url 'ihelp:login' %}" class="px-3 py-1.5 rounded-md hover:bg-gray-100">Entrar</a>
+        <a href="{% url 'ihelp:login' %}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">Entrar</a>
         <a href="{% url 'ihelp:cadastro_escolha' %}"
-          class="px-3 py-1.5 rounded-md bg-blue-600 text-white hover:bg-blue-700 btn-cadastrar">Cadastrar</a>
-
+          class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">Cadastrar</a>
         {% endif %}
       </nav>
 

@@ -117,13 +117,27 @@ class PostAnnouncement(models.Model):
     description = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ABERTA')
     ong = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='announcements')
-    photo = models.CharField(max_length=255, blank=True, null=True)
+    photo = models.ImageField(upload_to='announcements/', blank=True, null=True)
     categories = models.ManyToManyField('Category', through='PostCategory', related_name='announcements')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
         return self.title
+    
+    def get_photo_url(self):
+        """Retorna a URL da imagem, tratando URLs antigas (legado)"""
+        if not self.photo:
+            return None
+        # Se o campo contém uma URL (dados legados do CharField)
+        photo_str = str(self.photo)
+        if photo_str.startswith('http://') or photo_str.startswith('https://'):
+            return photo_str
+        # Se for um arquivo de imagem
+        try:
+            return self.photo.url
+        except (ValueError, AttributeError):
+            return None
 
 
 # ============================================

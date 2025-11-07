@@ -212,7 +212,7 @@ class PostAnnouncementForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
-            'photo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'URL da imagem'}),
+            'photo': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
         }
 
@@ -228,10 +228,12 @@ class PostAnnouncementForm(forms.ModelForm):
             post = super().save(commit=False)
             if ong is not None:
                 post.ong = ong
+            if status:
                 post.status = status
             if commit:
+                # Salvar o post (isso também salva o arquivo de imagem automaticamente)
                 post.save()
-            if commit:
+                # Salvar categorias
                 selected = list(self.cleaned_data.get('categories', []))
                 PostCategory.objects.filter(post=post).delete()
                 PostCategory.objects.bulk_create(
