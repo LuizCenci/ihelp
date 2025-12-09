@@ -1,0 +1,120 @@
+{% extends 'core/base.html' %}
+{% block title %}Meus Anúncios | iHelp{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <a href="{% url 'ihelp:home_vagas' %}" class="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors group">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+    </svg>
+    <span class="font-medium">Voltar para vagas</span>
+  </a>
+
+  <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Meus Anúncios</h1>
+      <p class="text-gray-500 mt-1">Gerencie seus anúncios de vagas de voluntariado</p>
+    </div>
+    <a href="{% url 'ihelp:criacao_post_vaga' %}" class="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Criar novo anúncio
+    </a>
+  </div>
+
+  {% for anuncio in anuncios %}
+    <article class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-4">
+      <div class="flex flex-col sm:flex-row gap-4">
+        {% if anuncio.get_photo_url %}
+        <div class="flex-shrink-0">
+          <img src="{{ anuncio.get_photo_url }}" alt="{{ anuncio.title }}" class="w-full sm:w-32 h-32 object-cover rounded-xl">
+        </div>
+        {% endif %}
+
+        <div class="flex-1">
+          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div class="flex-1">
+              <h2 class="text-lg font-semibold text-gray-900">{{ anuncio.title }}</h2>
+              <p class="text-sm text-gray-600 mt-2 line-clamp-2">{{ anuncio.description|truncatechars:150 }}</p>
+
+              <div class="mt-3 flex flex-wrap gap-2">
+                {% for category in anuncio.categories.all %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {{ category.name }}
+                </span>
+                {% endfor %}
+              </div>
+
+              <div class="mt-3 space-y-1">
+                <p class="text-xs text-gray-500">
+                  <span class="font-medium">Criado em:</span> {{ anuncio.created_at|date:"d/m/Y H:i" }}
+                </p>
+                {% if anuncio.updated_at %}
+                <p class="text-xs text-gray-500">
+                  <span class="font-medium">Atualizado em:</span> {{ anuncio.updated_at|date:"d/m/Y H:i" }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="flex flex-col items-start sm:items-end gap-3">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+                {% if anuncio.status == 'ABERTA' %}bg-green-100 text-green-800
+                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {% if anuncio.status == 'ABERTA' %}
+                  <svg class="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                {% else %}
+                  <svg class="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                  </svg>
+                {% endif %}
+                {{ anuncio.get_status_display }}
+              </span>
+
+              <div class="flex flex-wrap gap-2">
+                <a href="{% url 'ihelp:post_page' anuncio.id %}" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+                  <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                  Ver
+                </a>
+                <a href="{% url 'ihelp:editar_post_vaga' anuncio.id %}" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                  <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                  Editar
+                </a>
+                <a href="{% url 'ihelp:deletar_post_vaga' anuncio.id %}" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium border border-red-200 text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                  <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                  Excluir
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  {% empty %}
+    <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm text-center">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      <h3 class="mt-4 text-lg font-medium text-gray-900">Nenhum anúncio</h3>
+      <p class="mt-2 text-sm text-gray-500">Você ainda não criou nenhum anúncio de vaga.</p>
+      <a href="{% url 'ihelp:criacao_post_vaga' %}" class="mt-4 inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Criar primeiro anúncio
+      </a>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
+

@@ -24,6 +24,7 @@ urlpatterns = [
     path('comentario/<int:post_id>/adicionar/', views.comentar_post, name='comentar_post'),
     #CANDIDATURAS
     path('visualizar-candidaturas', views.visualizar_candidaturas, name='visualizar_candidaturas'),
+    path('meus-anuncios/', views.visualizar_meus_anuncios, name='visualizar_meus_anuncios'),
     path('vagas/candidatar/<int:id>', views.confirmar_candidatura, name='confirmar_candidatura'),
     path('candidaturas/aprovar/<int:id>', views.aceitar_candidatura, name='aceitar_candidatura'),
     path('candidaturas/recusar/<int:id>', views.recusar_candidatura, name='recusar_candidatura'),

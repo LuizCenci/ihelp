@@ -209,19 +209,20 @@ class PostAnnouncementForm(forms.ModelForm):
     class Meta:
         model = PostAnnouncement
         fields = ['title', 'description', 'photo', 'status', 'link_forms']
+        labels = {
+            'title': 'Título',
+            'description': 'Descrição',
+            'photo': 'Foto',
+            'status': 'Status',
+            'link_forms': 'Link do Formulário',
+        }
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o título da vaga'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Descreva a vaga de voluntariado...'}),
             'photo': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
+            'link_forms': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://exemplo.com/formulario'}),
         }
-
-    # Campo de categorias (muitos-para-muitos)
-    categories = forms.ModelMultipleChoiceField(
-        queryset=Category.objects.order_by('name'),
-        required=False,
-        widget=forms.SelectMultiple(attrs={'class': 'form-control'})
-    )
 
     def save(self, commit=True, ong=None):
         post = super().save(commit=False)
@@ -231,7 +232,6 @@ class PostAnnouncementForm(forms.ModelForm):
 
         if commit:
             post.save()
-            self.save_m2m()
 
         return post
 
