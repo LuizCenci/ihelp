@@ -1,9 +1,0 @@
-{% extends 'core/base.html' %}
-{% block title %}iHelp – Buscar Ações{% endblock %}
-{% block content %}
-<div class="w-full flex justify-center py-10 px-4">
-  {% for anuncio in anuncios %}
-    {{ anuncio.title }}
-  {% endfor %}
-</div>
-{% endblock %}
