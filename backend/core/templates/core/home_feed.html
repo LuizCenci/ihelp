@@ -2,64 +2,110 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="max-w-5xl mx-auto space-y-6">
 
-    <h2>Feed de ONGs</h2>
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold text-gray-900">Feed de ONGs</h1>
+    {% if request.user.is_authenticated and request.user.role == 'ONG' %}
+      <a href="{% url 'ihelp:criar_post_feed' %}"
+         class="inline-flex items-center px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
+        Criar novo post
+      </a>
+    {% endif %}
+  </div>
 
-    
-
-    <!-- LISTA DE POSTS -->
-    {% for post in posts %}
-        <div class="card mb-4 shadow-sm">
-
-            {% if post.photo %}
-            <img src="{{ post.photo }}" class="card-img-top" style="max-height: 350px; object-fit: cover;">
-            {% endif %}
-
-            <div class="card-body">
-                <h5 class="card-title">{{ post.ong.username }}</h5>
-                <p class="text-muted" style="font-size: 0.9rem;">
-                    {{ post.created_at|date:"d/m/Y H:i" }}
-                </p>
-
-                <p class="card-text">{{ post.description }}</p>
-
-                {% if user == post.ong %}
-                    <form action="{% url 'ihelp:deletar_post_feed' post.id %}" method="GET">
-                        <button class="btn btn-danger btn-sm">Excluir</button>
-                    </form>
-                {% endif %}
-            </div>
-
-            <hr>
-
-            <!-- COMENTÁRIOS -->
-            <div class="px-3 pb-3">
-
-                <h6>Comentários ({{ post.comments.count }})</h6>
-
-                {% for c in post.comments.all %}
-                    <div class="border rounded p-2 mb-2">
-                        <strong>{{ c.user.username }}</strong>
-                        <p class="mb-0">{{ c.content }}</p>
-                        <span class="text-muted" style="font-size: 0.8rem;">
-                            {{ c.created_at|date:"d/m/Y H:i" }}
-                        </span>
-                    </div>
-                {% empty %}
-                    <p class="text-muted">Nenhum comentário ainda.</p>
-                {% endfor %}
-
-                <!-- FORMULÁRIO DE COMENTAR -->
-                <form action="{% url 'ihelp:comentar_post' post.id %}" method="POST">
-                    {% csrf_token %}
-                    {{ comment_form }}
-                    <button class="btn btn-primary btn-sm mt-2">Comentar</button>
-                </form>
-
-            </div>
-
+  {% for post in posts %}
+    <article class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      {% if post.photo %}
+        <div class="bg-gray-100">
+          <img src="{{ post.photo }}"
+               alt="Imagem do post"
+               class="w-full max-h-80 object-cover">
         </div>
-    {% endfor %}
+      {% endif %}
+
+      <div class="p-5">
+        <!-- Cabeçalho do card -->
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-base font-semibold text-gray-900">
+              {{ post.ong.username }}
+            </h2>
+            <p class="text-xs text-gray-500">
+              {{ post.created_at|date:"d/m/Y H:i" }}
+            </p>
+          </div>
+
+          {% if user == post.ong %}
+            <form action="{% url 'ihelp:deletar_post_feed' post.id %}" method="GET">
+              <button
+                class="inline-flex items-center px-2.5 py-1.5 rounded-md border border-red-200 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100">
+                Excluir
+              </button>
+            </form>
+          {% endif %}
+        </div>
+
+        <!-- Conteúdo -->
+        <p class="text-sm text-gray-800 whitespace-pre-line">
+          {{ post.description }}
+        </p>
+      </div>
+
+      <div class="border-t border-gray-200 px-5 py-4 space-y-3">
+        <!-- Lista de comentários -->
+        <div>
+          <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            Comentários ({{ post.comments.count }})
+          </h3>
+
+          {% if post.comments.all %}
+            <div class="space-y-2 max-h-56 overflow-y-auto pr-1">
+              {% for c in post.comments.all %}
+                <div class="border border-gray-200 rounded-lg px-3 py-2 bg-gray-50">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-semibold text-gray-900">
+                      {{ c.user.username }}
+                    </span>
+                    <span class="text-[11px] text-gray-500">
+                      {{ c.created_at|date:"d/m/Y H:i" }}
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-800">
+                    {{ c.content }}
+                  </p>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-xs text-gray-500">Nenhum comentário ainda.</p>
+          {% endif %}
+        </div>
+
+        <!-- Formulário de comentário -->
+        {% if request.user.is_authenticated %}
+          <form action="{% url 'ihelp:comentar_post' post.id %}" method="POST" class="space-y-2">
+            {% csrf_token %}
+            <textarea name="content"
+                      rows="2"
+                      class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Escreva um comentário..."></textarea>
+            <div class="flex justify-end">
+              <button
+                class="inline-flex items-center px-3 py-1.5 rounded-md bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Comentar
+              </button>
+            </div>
+          </form>
+        {% else %}
+          <p class="text-xs text-gray-500">
+            Faça login para comentar.
+          </p>
+        {% endif %}
+      </div>
+    </article>
+  {% empty %}
+    <p class="text-sm text-gray-600">Ainda não há posts no feed.</p>
+  {% endfor %}
 </div>
 {% endblock %}

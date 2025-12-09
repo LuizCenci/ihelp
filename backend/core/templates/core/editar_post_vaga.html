@@ -1,61 +1,179 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load widget_tweaks %}
+{% block title %}Editar Anúncio | iHelp{% endblock %}
 
 {% block content %}
+<div class="min-h-[70vh] w-full flex items-center justify-center py-8">
+  <div class="w-full max-w-2xl bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-semibold text-orange-700">Editar Anúncio</h1>
+      <a href="{% url 'ihelp:home_vagas' %}" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </a>
+    </div>
 
-<div class="container mt-5">
+    <form method="POST" enctype="multipart/form-data" class="space-y-5">
+      {% csrf_token %}
 
-    <h2 class="mb-4">Editar Postagem</h2>
+      {% if form.non_field_errors %}
+      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
 
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
+      <!-- TÍTULO -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Título</label>
+        {{ form.title|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent" }}
+        {% if form.title.errors %}
+        <p class="text-xs text-red-600 mt-1.5">{{ form.title.errors }}</p>
+        {% endif %}
+      </div>
 
-        <!-- TÍTULO -->
-        <div class="mb-3">
-            <label class="form-label">Título</label>
-            {{ form.title }}
+      <!-- DESCRIÇÃO -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Descrição</label>
+        {{ form.description|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none" }}
+        {% if form.description.errors %}
+        <p class="text-xs text-red-600 mt-1.5">{{ form.description.errors }}</p>
+        {% endif %}
+      </div>
+
+      <!-- STATUS -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Status da Vaga</label>
+        {{ form.status|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent" }}
+        {% if form.status.errors %}
+        <p class="text-xs text-red-600 mt-1.5">{{ form.status.errors }}</p>
+        {% endif %}
+      </div>
+
+      <!-- IMAGEM ATUAL / NOVA IMAGEM -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Imagem da Vaga</label>
+
+        {% if form.instance.get_photo_url %}
+        <div class="mb-3" id="current-image-container">
+          <p class="text-sm text-gray-600 mb-2">Imagem atual:</p>
+          <img src="{{ form.instance.get_photo_url }}" alt="Imagem atual"
+               class="max-w-xs rounded-lg border border-gray-200" id="current-image">
+        </div>
+        {% endif %}
+
+        <div id="image-preview-container" class="mb-3 hidden">
+          <p class="text-sm text-gray-600 mb-2">Pré-visualização:</p>
+          <img id="image-preview" src="" alt="Preview"
+               class="max-w-xs rounded-lg border border-gray-200">
         </div>
 
-        <!-- DESCRIÇÃO -->
-        <div class="mb-3">
-            <label class="form-label">Descrição</label>
-            {{ form.description }}
+        <div class="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-orange-400 transition-colors" id="upload-area">
+          <div class="space-y-1 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" id="upload-icon" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+              <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <div class="flex text-sm text-gray-600 justify-center items-center">
+              <label for="{{ form.photo.id_for_label }}" class="relative cursor-pointer bg-white rounded-md font-medium text-orange-600 hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500">
+                <span>Selecione uma imagem</span>
+                {{ form.photo|add_class:"hidden" }}
+              </label>
+              <p class="pl-1">ou arraste e solte</p>
+            </div>
+            <p class="text-xs text-gray-500">PNG, JPG, GIF até 10MB</p>
+          </div>
         </div>
 
-        <!-- STATUS -->
-        <div class="mb-3">
-            <label class="form-label">Status da Vaga</label>
-            {{ form.status }}
-        </div>
+        {% if form.photo.errors %}
+        <p class="text-xs text-red-600 mt-1.5">{{ form.photo.errors }}</p>
+        {% endif %}
+      </div>
 
-        <!-- IMAGEM ATUAL -->
-        <div class="mb-3">
-            <label class="form-label">Imagem atual</label><br>
+      <!-- CATEGORIAS -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Categorias</label>
+        {{ form.categories|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent" }}
+        {% if form.categories.errors %}
+        <p class="text-xs text-red-600 mt-1.5">{{ form.categories.errors }}</p>
+        {% endif %}
+      </div>
 
-            {% if form.instance.get_photo_url %}
-                <img src="{{ form.instance.get_photo_url }}" 
-                     alt="Imagem atual" 
-                     style="max-width: 300px; border-radius: 8px; display:block; margin-bottom:10px;">
-            {% else %}
-                <p>Nenhuma imagem enviada.</p>
-            {% endif %}
-        </div>
-
-        <!-- ALTERAR FOTO -->
-        <div class="mb-3">
-            <label class="form-label">Alterar imagem</label>
-            {{ form.photo }}
-        </div>
-
-        <!-- CATEGORIAS -->
-        <div class="mb-3">
-            <label class="form-label">Categorias</label>
-            {{ form.categories }}
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
+      <div class="flex gap-3 pt-2">
+        <a href="{% url 'ihelp:home_vagas' %}" class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-center text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+          Cancelar
+        </a>
+        <button type="submit" class="flex-1 px-4 py-3 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors">
+          Salvar alterações
+        </button>
+      </div>
     </form>
-
+  </div>
 </div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('{{ form.photo.id_for_label }}');
+    const previewContainer = document.getElementById('image-preview-container');
+    const previewImg = document.getElementById('image-preview');
+    const uploadArea = document.getElementById('upload-area');
+    const currentImageContainer = document.getElementById('current-image-container');
+
+    if (fileInput) {
+      fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+          if (currentImageContainer) currentImageContainer.classList.add('hidden');
+          if (uploadArea) uploadArea.classList.add('hidden');
+
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            previewImg.src = event.target.result;
+            previewContainer.classList.remove('hidden');
+          };
+          reader.onerror = function() {
+            alert('Erro ao carregar a imagem. Por favor, tente novamente.');
+          };
+          reader.readAsDataURL(file);
+        } else if (file) {
+          alert('Por favor, selecione um arquivo de imagem válido (PNG, JPG, GIF).');
+          fileInput.value = '';
+        } else {
+          if (uploadArea) uploadArea.classList.remove('hidden');
+          previewContainer.classList.add('hidden');
+          if (currentImageContainer) currentImageContainer.classList.remove('hidden');
+        }
+      });
+
+      if (uploadArea) {
+        uploadArea.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.add('border-orange-500', 'bg-orange-50');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.remove('border-orange-500', 'bg-orange-50');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.remove('border-orange-500', 'bg-orange-50');
+
+          const files = e.dataTransfer.files;
+          if (files.length > 0 && files[0].type.startsWith('image/')) {
+            fileInput.files = files;
+            const changeEvent = new Event('change', { bubbles: true });
+            fileInput.dispatchEvent(changeEvent);
+          } else {
+            alert('Por favor, solte apenas arquivos de imagem (PNG, JPG, GIF).');
+          }
+        });
+      }
+    }
+  });
+</script>
 {% endblock %}

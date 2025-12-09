@@ -1,13 +1,43 @@
 {% extends 'core/base.html' %}
+{% block title %}Criar post | iHelp{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <h3>Criar Post</h3>
+<div class="max-w-4xl mx-auto">
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">Criar post no feed</h1>
 
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-success">Publicar</button>
+  <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 space-y-6">
+    <form method="POST" class="space-y-6">
+      {% csrf_token %}
+
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700">
+          Texto do post
+        </label>
+        <textarea name="description" rows="4"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Escreva aqui o que deseja compartilhar..."></textarea>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700">
+          URL da imagem (opcional)
+        </label>
+        <input type="text" name="photo"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="https://exemplo.com/imagem.jpg">
+        <p class="text-xs text-gray-500">Cole aqui o link da imagem que será exibida no post.</p>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-4">
+        <a href="{% url 'ihelp:home_feed' %}"
+           class="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          Cancelar
+        </a>
+        <button type="submit"
+                class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          Publicar
+        </button>
+      </div>
     </form>
-
+  </div>
 </div>
 {% endblock %}

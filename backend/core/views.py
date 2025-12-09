@@ -121,14 +121,14 @@ def search(request):
 def criacao_post_vaga(request):
     if getattr(request.user, 'role', None) != Role.ONG:
         messages.error(request, 'Apenas ONGs podem criar postagens.')
-        return redirect('ihelp:home')
+        return redirect('ihelp:home_vagas')
     
     if request.method == "POST":
         form = PostAnnouncementForm(request.POST, request.FILES)
         if form.is_valid():
             form.save(ong=request.user)
             messages.success(request, 'Post criado com sucesso!')
-            return redirect('ihelp:home')
+            return redirect('ihelp:home_vagas')
     
     else:
         form = PostAnnouncementForm()
@@ -140,7 +140,7 @@ def editar_post_vaga(request, id):
 
     if getattr(request.user, 'role', None) != Role.ONG:
         messages.error(request, 'Apenas ONGs podem editar postagens.')
-        return redirect('ihelp:home')
+        return redirect('ihelp:home_vagas')
     
 
     post = get_object_or_404(PostAnnouncement, id=id)
@@ -148,7 +148,7 @@ def editar_post_vaga(request, id):
     print(request.user == post.ong)
     if post.ong != request.user:
         messages.error(request, 'Você não tem permissão para editar este post.')
-        return redirect('ihelp:home')
+        return redirect('ihelp:home_vagas')
 
     # Construir o form
     if request.method == 'POST':
@@ -160,7 +160,7 @@ def editar_post_vaga(request, id):
             post.save()
             form.save_m2m()   # salva categorias
             messages.success(request, 'Post editado com sucesso!')
-            return redirect('ihelp:home')
+            return redirect('ihelp:home_vagas')
 
     else:
         form = PostAnnouncementForm(instance=post, initial={
@@ -178,20 +178,20 @@ def deletar_post_vaga(request, id):
     # Apenas ONGs podem excluir
     if getattr(request.user, 'role', None) != Role.ONG:
         messages.error(request, 'Apenas ONGs podem excluir postagens.')
-        return redirect('ihelp:home')
+        return redirect('ihelp:home_vagas')
 
     post = get_object_or_404(PostAnnouncement, id=id)
 
     # ONG só pode excluir seus próprios posts
     if post.ong != request.user:
         messages.error(request, 'Você não tem permissão para excluir este post.')
-        return redirect('ihelp:home')
+        return redirect('ihelp:home_vagas')
 
     # Confirmar exclusão
     if request.method == 'POST':
         post.delete()
         messages.success(request, 'Post deletado com sucesso!')
-        return redirect('ihelp:home')
+        return redirect('ihelp:home_vagas')
 
     return render(request, 'core/deletar_post_vaga.html', {
         'post': post,
