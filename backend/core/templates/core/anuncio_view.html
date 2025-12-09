@@ -1,5 +1,6 @@
 {% extends 'core/base.html' %}
 {% block title %}{{ anuncio.title }} | iHelp{% endblock %}
+
 {% block content %}
 <div class="max-w-4xl mx-auto">
   <a href="{% url 'ihelp:home_vagas' %}" class="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors group">
@@ -11,9 +12,12 @@
   
   <article class="bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
     <h1 class="text-3xl font-bold mb-6 text-gray-900">{{ anuncio.title }}</h1>
+
     {% if anuncio.photo %}
     <div class="mb-6">
-      <img src="{{ anuncio.get_photo_url }}" alt="{{ anuncio.title }}" class="w-full rounded-lg border border-gray-200 object-cover max-h-96" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-64 bg-gray-200 rounded-lg border border-gray-200 flex items-center justify-center\'><svg class=\'w-16 h-16 text-gray-400\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\'/></svg></div>'">
+      <img src="{{ anuncio.get_photo_url }}" alt="{{ anuncio.title }}"
+           class="w-full rounded-lg border border-gray-200 object-cover max-h-96"
+           onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-64 bg-gray-200 rounded-lg border border-gray-200 flex items-center justify-center\'><svg class=\'w-16 h-16 text-gray-400\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\'/></svg></div>'">
     </div>
     {% else %}
     <div class="mb-6 w-full h-64 bg-gray-200 rounded-lg border border-gray-200 flex items-center justify-center">
@@ -22,6 +26,7 @@
       </svg>
     </div>
     {% endif %}
+
     <div class="prose max-w-none">
       <p class="text-gray-700 text-base leading-relaxed whitespace-pre-line">{{ anuncio.description }}</p>
     </div>
@@ -50,14 +55,68 @@
       </span>
     </div>
     {% endif %}
+
     {% if request.user.is_authenticated and request.user == anuncio.ong %}
-      <a href="{% url 'ihelp:editar_post_vaga' anuncio.id %}" class="btn btn-warning mt-3">
-          Editar Post
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="{% url 'ihelp:editar_post_vaga' anuncio.id %}"
+         class="inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium bg-orange-600 text-white hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors">
+        <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+        Editar anúncio
       </a>
-      <a href="{% url 'ihelp:deletar_post_vaga' anuncio.id %}" class="btn btn-danger">Excluir</a>
+
+      <a href="{% url 'ihelp:deletar_post_vaga' anuncio.id %}"
+         class="inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium border border-red-200 text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+        <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-3h4m-6 0a1 1 0 00-1 1v1h8V5a1 1 0 00-1-1m-6 0h6" />
+        </svg>
+        Excluir anúncio
+      </a>
+    </div>
     {% endif %}
 
-  </article>
+
+
+
+
+
+    {# Botões de candidatura para usuários que NÃO são a ONG dona do anúncio #}
+    {% if request.user.is_authenticated and request.user != anuncio.ong %}
+      <div class="mt-8">
+        {% if already_applied %}
+          <p class="text-green-700 font-medium">
+            Você já se candidatou para esta vaga.
+          </p>
+        {% else %}
+          {% if anuncio.link_forms %}
+            <div class="flex flex-wrap gap-3">
+              <a href="{{ anuncio.link_forms }}" target="_blank"
+                 class="inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                Ir para o formulário
+              </a>
+
+              <form action="{% url 'ihelp:confirmar_candidatura' anuncio.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit"
+                        class="inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700 transition-colors">
+                  Já me candidatei
+                </button>
+              </form>
+            </div>
+          {% else %}
+            <p class="text-gray-500 text-sm">Esta vaga ainda não tem um formulário de candidatura.</p>
+          {% endif %}
+        {% endif %}
+      </div>
+    {% endif %}
+
     
+
+  </article>
 </div>
 {% endblock %}

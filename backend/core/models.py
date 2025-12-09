@@ -119,6 +119,7 @@ class PostAnnouncement(models.Model):
     ong = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='announcements')
     photo = models.ImageField(upload_to='announcements/', blank=True, null=True)
     categories = models.ManyToManyField('Category', through='PostCategory', related_name='announcements')
+    link_forms = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
@@ -182,10 +183,15 @@ class Comment(models.Model):
 # APPLICATIONS
 # ============================================
 class Application(models.Model):
+    STATUS_CHOICES = [
+        ('PENDENTE', 'Pendente'),
+        ('ACEITA', 'Aceita'),
+        ('RECUSADA', 'Recusada'),
+    ]
     volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='applications')
     post = models.ForeignKey(PostAnnouncement, on_delete=models.CASCADE, related_name='applications')
     application_date = models.DateTimeField(auto_now_add=True)
-    status = models.BooleanField(null=True, blank=True)  # Aceito / Rejeitado
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDENTE')
 
     class Meta:
         unique_together = ('volunteer', 'post')

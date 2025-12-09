@@ -1,36 +1,50 @@
 {% extends 'core/base.html' %}
+{% block title %}Excluir Anúncio | iHelp{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="min-h-[70vh] w-full flex items-center justify-center py-8">
+  <div class="w-full max-w-2xl bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-semibold text-red-600">Excluir Anúncio</h1>
+      <a href="{% url 'ihelp:home_vagas' %}" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </a>
+    </div>
 
-    <h2 class="mb-4">Excluir Postagem</h2>
-
-    <div class="alert alert-danger">
-        <strong>Atenção!</strong> Você está prestes a excluir o anúncio:
-        <br>
-        <strong>{{ post.title }}</strong>
-        <br><br>
-        Esta ação é permanente e não poderá ser desfeita.
+    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+      <p class="font-semibold mb-1">Atenção!</p>
+      <p class="mb-1">
+        Você está prestes a excluir o anúncio:
+        <span class="font-semibold">"{{ post.title }}"</span>
+      </p>
+      <p>Esta ação é permanente e não poderá ser desfeita.</p>
     </div>
 
     {% if post.get_photo_url %}
-        <img src="{{ post.get_photo_url }}" alt="Imagem do Post"
-             class="img-fluid mb-4" style="max-height: 250px; border-radius: 6px;">
+    <div class="mb-5">
+      <img src="{{ post.get_photo_url }}" alt="Imagem do anúncio"
+           class="max-h-64 rounded-xl border border-gray-200 object-cover w-full">
+    </div>
     {% endif %}
 
-    <p><strong>Status:</strong> {{ post.status }}</p>
-    <p><strong>Criado em:</strong> {{ post.created_at|date:"d/m/Y H:i" }}</p>
+    <div class="mb-5 space-y-1 text-sm text-gray-700">
+      <p><span class="font-semibold">Status:</span> {{ post.get_status_display|default:post.status }}</p>
+      <p><span class="font-semibold">Criado em:</span> {{ post.created_at|date:"d/m/Y H:i" }}</p>
+    </div>
 
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">
-            Confirmar Exclusão
-        </button>
-
-        <a href="{% url 'ihelp:post_page' post.id %}" class="btn btn-secondary">
-            Cancelar
-        </a>
+    <form method="POST" class="flex gap-3 pt-2">
+      {% csrf_token %}
+      <button type="submit"
+              class="flex-1 px-4 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+        Confirmar exclusão
+      </button>
+      <a href="{% url 'ihelp:post_page' post.id %}"
+         class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-center text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+        Cancelar
+      </a>
     </form>
-
+  </div>
 </div>
 {% endblock %}

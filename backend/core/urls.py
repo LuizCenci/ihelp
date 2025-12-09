@@ -13,7 +13,7 @@ urlpatterns = [
     path('', views.home_feed, name='home_feed'),
     path('vagas/', views.home_vagas, name='home_vagas'),
     #
-    
+    path('vagas/<int:pk>/candidatar/', views.confirmar_candidatura, name='confirmar_candidatura'),
     path('criar-anuncio/', views.criacao_post_vaga, name='criacao_post_vaga'),
     path('vagas/<int:id>', views.post_page, name='post_page'),
     path('search/', views.search, name='search'),

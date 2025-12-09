@@ -89,7 +89,32 @@ def home_vagas(request):
 #VISUALIZAÇÃO DE POST
 def post_page(request, id):
     anuncio = get_object_or_404(PostAnnouncement, pk=id)
-    return render(request, 'core/anuncio_view.html', {'anuncio': anuncio})
+
+    already_applied = False
+    if request.user.is_authenticated and request.user.role == "VOLUNTEER":
+        already_applied = Application.objects.filter(
+            post=anuncio,
+            volunteer=request.user,
+        ).exists()
+
+    context = {
+    'anuncio': anuncio,
+    'already_applied': already_applied,}
+    
+
+    return render(request, 'core/anuncio_view.html', context)
+
+@login_required
+def confirmar_candidatura(request, id):
+    anuncio = get_object_or_404(PostAnnouncement, pk=id)
+
+    Application.objects.get_or_create(
+        post=anuncio,
+        volunteer=request.user,
+        defaults={'status': 'PENDENTE'},
+    )
+
+    return redirect('ihelp:post_page', id=anuncio.id)
 
 #BUSCA POR ANUNCIO
 def search(request):
@@ -121,19 +146,20 @@ def search(request):
 def criacao_post_vaga(request):
     if getattr(request.user, 'role', None) != Role.ONG:
         messages.error(request, 'Apenas ONGs podem criar postagens.')
-        return redirect('ihelp:home')
+        return redirect('ihelp:home_vagas')
     
     if request.method == "POST":
         form = PostAnnouncementForm(request.POST, request.FILES)
         if form.is_valid():
             form.save(ong=request.user)
             messages.success(request, 'Post criado com sucesso!')
-            return redirect('ihelp:home')
+            return redirect('ihelp:home_vagas')
     
     else:
         form = PostAnnouncementForm()
 
     return render(request, 'core/criacao_post_vaga.html', {'form': form})
+
 
 @login_required
 def editar_post_vaga(request, id):
@@ -178,20 +204,20 @@ def deletar_post_vaga(request, id):
     # Apenas ONGs podem excluir
     if getattr(request.user, 'role', None) != Role.ONG:
         messages.error(request, 'Apenas ONGs podem excluir postagens.')
-        return redirect('ihelp:home')
+        return redirect('ihelp:home_vagas')
 
     post = get_object_or_404(PostAnnouncement, id=id)
 
     # ONG só pode excluir seus próprios posts
     if post.ong != request.user:
         messages.error(request, 'Você não tem permissão para excluir este post.')
-        return redirect('ihelp:home')
+        return redirect('ihelp:home_vagas')
 
     # Confirmar exclusão
     if request.method == 'POST':
         post.delete()
         messages.success(request, 'Post deletado com sucesso!')
-        return redirect('ihelp:home')
+        return redirect('ihelp:home_vagas')
 
     return render(request, 'core/deletar_post_vaga.html', {
         'post': post,
