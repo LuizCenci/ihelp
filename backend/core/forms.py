@@ -245,7 +245,7 @@ class PostFeedForm(forms.ModelForm):
         fields = ['description', 'photo']
         widgets = {
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'photo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'URL da imagem'}),
+            'photo': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
         }
 
     def save(self, commit=True, ong=None):
@@ -254,6 +254,7 @@ class PostFeedForm(forms.ModelForm):
             feed.ong = ong
         if commit:
             feed.save()
+            
         return feed
 
 
