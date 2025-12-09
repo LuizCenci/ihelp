@@ -1,0 +1,46 @@
+{% if is_ong %}
+  <h1>Candidaturas para minhas vagas</h1>
+  {% for app in applications %}
+    <div>
+      <p>Vaga: {{ app.post.title }}</p>
+      <p>Voluntário: {{ app.volunteer.username }}</p>
+      <p>Status: {{ app.status }}</p>
+      <p>Data: {{ app.application_date }}</p>
+
+      {% if app.status == 'PENDENTE' %}
+        <form action="{% url 'ihelp:aceitar_candidatura' app.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit">Aceitar</button>
+        </form>
+        <form action="{% url 'ihelp:recusar_candidatura' app.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit">Recusar</button>
+        </form>
+      {% endif %}
+    </div>
+    <p>----------------</p>
+  {% empty %}
+    <p>Não há candidaturas nas suas vagas ainda.</p>
+  {% endfor %}
+
+
+
+{% else %}
+  <h1>Minhas candidaturas</h1>
+  {% for app in applications %}
+    <div>
+      <p>Vaga: {{ app.post.title }}</p>
+      <p>ONG: {{ app.post.ong.username }}</p>
+      <p>Status: {{ app.status }}</p>
+      <p>Data: {{ app.application_date }}</p>
+
+       <form action="{% url 'ihelp:deletar_candidatura' app.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Cancelar candidatura</button>
+      </form>
+    </div>
+    <p>------------------</p>
+  {% empty %}
+    <p>Você ainda não se candidatou a nenhuma vaga.</p>
+  {% endfor %}
+{% endif %}

@@ -88,7 +88,7 @@ def home_vagas(request):
 
 #VISUALIZAÇÃO DE POST
 def post_page(request, id):
-    anuncio = get_object_or_404(PostAnnouncement, pk=id)
+    anuncio = get_object_or_404(PostAnnouncement, id=id)
 
     already_applied = False
     if request.user.is_authenticated and request.user.role == "VOLUNTEER":
@@ -106,7 +106,7 @@ def post_page(request, id):
 
 @login_required
 def confirmar_candidatura(request, id):
-    anuncio = get_object_or_404(PostAnnouncement, pk=id)
+    anuncio = get_object_or_404(PostAnnouncement, id=id)
 
     Application.objects.get_or_create(
         post=anuncio,
@@ -273,3 +273,60 @@ def deletar_post_feed(request, id):
         return redirect('ihelp:home_feed')
 
     return render(request, 'core/deletar_post_feed.html', {'post': post})
+
+
+@login_required
+def visualizar_candidaturas(request):
+    user = request.user
+
+    if user.role == "ONG":
+        applications = Application.objects.filter(
+            post__ong=user
+        ).order_by('status', 'application_date') 
+    else:  
+        applications = Application.objects.filter(
+            volunteer=user
+        ).order_by('-application_date')
+
+    context = {
+        'applications': applications,
+        'is_ong': user.role == "ONG",
+    }
+    return render(request, 'core/visualizar_candidaturas.html', context)
+
+
+@login_required
+def aceitar_candidatura(request, id):
+    app = get_object_or_404(Application, id=id)
+
+    # garantir que só a ONG dona da vaga possa mudar
+    if app.post.ong != request.user:
+        messages.error(request, "Você não pode editar este post.")
+        return redirect('ihelp:home_feed')
+
+    app.status = 'ACEITA'
+    app.save()
+    return redirect('ihelp:visualizar_candidaturas')
+
+
+@login_required
+def recusar_candidatura(request, id):
+    app = get_object_or_404(Application, id=id)
+
+    if app.post.ong != request.user:
+        messages.error(request, "Você não pode editar este post.")
+        return redirect('ihelp:home_feed')
+    app.status = 'RECUSADA'
+    app.save()
+    return redirect('ihelp:visualizar_candidaturas')
+
+@login_required
+def deletar_candidatura(request, id):
+    app = get_object_or_404(Application, id=id)
+
+    if app.volunteer != request.user:
+        messages.error(request, "Você não pode deletar esta candidatura.")
+        return redirect('ihelp:home_feed')
+
+    app.delete()
+    return redirect('ihelp:visualizar_candidaturas')
