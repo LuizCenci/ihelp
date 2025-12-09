@@ -1,11 +1,12 @@
 {% extends 'core/base.html' %}
+{% load widget_tweaks %}
 {% block title %}Criar post | iHelp{% endblock %}
 {% block content %}
 <div class="max-w-4xl mx-auto">
   <h1 class="text-2xl font-bold text-gray-900 mb-6">Criar post no feed</h1>
 
   <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 space-y-6">
-    <form method="POST" class="space-y-6">
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
       {% csrf_token %}
 
       <div class="space-y-2">
@@ -17,15 +18,102 @@
           placeholder="Escreva aqui o que deseja compartilhar..."></textarea>
       </div>
 
+      <!-- ======================= UPLOAD DE IMAGENS (MODELO DO HTML 1) ======================= -->
       <div class="space-y-2">
-        <label class="block text-sm font-medium text-gray-700">
-          URL da imagem (opcional)
-        </label>
-        <input type="text" name="photo"
-          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="https://exemplo.com/imagem.jpg">
-        <p class="text-xs text-gray-500">Cole aqui o link da imagem que será exibida no post.</p>
+        <label class="block text-sm font-medium text-gray-700">Imagem (opcional)</label>
+
+        <!-- Preview atual (se existir) -->
+        <div id="current-image-container" class="hidden mb-3">
+          <p class="text-sm text-gray-600 mb-2">Imagem atual:</p>
+          <img id="current-image" src="" class="max-w-xs rounded-lg border border-gray-200">
+        </div>
+
+        <!-- Preview da nova imagem -->
+        <div id="image-preview-container" class="hidden mb-3">
+          <p class="text-sm text-gray-600 mb-2">Pré-visualização:</p>
+          <img id="image-preview" src="" class="max-w-xs rounded-lg border border-gray-200">
+        </div>
+
+        <!-- Área de upload -->
+        <div id="upload-area"
+             class="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-400 transition-colors">
+          <div class="space-y-1 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+              <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
+            </svg>
+
+            <div class="flex text-sm text-gray-600 justify-center items-center">
+              <label for="id_photo"
+                     class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                <span>Selecione uma imagem</span>
+                <input id="id_photo" name="photo" type="file" accept="image/*" class="hidden">
+              </label>
+              <p class="pl-1">ou arraste e solte</p>
+            </div>
+
+            <p class="text-xs text-gray-500">PNG, JPG até 10MB</p>
+          </div>
+        </div>
       </div>
+      <!-- ====================================================================== -->
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const fileInput = document.querySelector('#id_photo');
+          const previewContainer = document.getElementById('image-preview-container');
+          const previewImg = document.getElementById('image-preview');
+          const uploadArea = document.getElementById('upload-area');
+          const currentImageContainer = document.getElementById('current-image-container');
+
+          if (fileInput) {
+            fileInput.addEventListener('change', function (e) {
+              const file = e.target.files[0];
+              if (file && file.type.startsWith('image/')) {
+
+                if (currentImageContainer) {
+                  currentImageContainer.classList.add('hidden');
+                }
+
+                uploadArea.classList.add('hidden');
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                  previewImg.src = event.target.result;
+                  previewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+              } else {
+                uploadArea.classList.remove('hidden');
+                previewContainer.classList.add('hidden');
+              }
+            });
+
+            // Drag and Drop
+            uploadArea.addEventListener('dragover', function (e) {
+              e.preventDefault();
+              uploadArea.classList.add('border-blue-500', 'bg-blue-50');
+            });
+
+            uploadArea.addEventListener('dragleave', function () {
+              uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+
+            uploadArea.addEventListener('drop', function (e) {
+              e.preventDefault();
+              uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+
+              const files = e.dataTransfer.files;
+              if (files.length > 0 && files[0].type.startsWith('image/')) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change'));
+              } else {
+                alert('Por favor, solte apenas imagens.');
+              }
+            });
+          }
+        });
+      </script>
 
       <div class="flex justify-end gap-3 pt-4">
         <a href="{% url 'ihelp:home_feed' %}"

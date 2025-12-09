@@ -146,13 +146,27 @@ class PostAnnouncement(models.Model):
 # ============================================
 class PostFeed(models.Model):
     description = models.TextField()
-    photo = models.CharField(max_length=255, blank=True, null=True)
+    photo = models.ImageField(upload_to='feed/', blank=True, null=True)
     ong = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='feeds')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
         return f"Post da ONG {self.ong.username}"
+    
+    def get_photo_url(self):
+        """Retorna a URL da imagem, tratando URLs antigas (legado)"""
+        if not self.photo:
+            return None
+        # Se o campo contém uma URL (dados legados do CharField)
+        photo_str = str(self.photo)
+        if photo_str.startswith('http://') or photo_str.startswith('https://'):
+            return photo_str
+        # Se for um arquivo de imagem
+        try:
+            return self.photo.url
+        except (ValueError, AttributeError):
+            return None
 
 
 # ============================================

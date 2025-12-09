@@ -18,6 +18,7 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('editar-anuncio/<int:id>', views.editar_post_vaga, name='editar_post_vaga'),
     path('deletar-anuncio/<int:id>', views.deletar_post_vaga, name='deletar_post_vaga'),
+    #FEED
     path('criar-post-feed/', views.criar_post_feed, name='criar_post_feed'),
     path('deletar-post-feed/<int:id>', views.deletar_post_feed, name='deletar_post_feed'),
     path('comentario/<int:post_id>/adicionar/', views.comentar_post, name='comentar_post'),

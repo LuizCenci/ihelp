@@ -96,6 +96,9 @@ def post_page(request, id):
             post=anuncio,
             volunteer=request.user,
         ).exists()
+    print("User atual:", request.user.id, request.user.email)
+    print("Applications desse user:", Application.objects.filter(volunteer=request.user))
+    print("Existe para este post?", Application.objects.filter(volunteer=request.user, post=anuncio).exists())
 
     context = {
     'anuncio': anuncio,
@@ -232,7 +235,7 @@ def criar_post_feed(request):
         return redirect('ihelp:home_feed')
 
     if request.method == 'POST':
-        form = PostFeedForm(request.POST)
+        form = PostFeedForm(request.POST, request.FILES)
         if form.is_valid():
             form.save(ong=request.user)
             messages.success(request, "Post criado com sucesso!")
