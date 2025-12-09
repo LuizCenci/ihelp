@@ -333,3 +333,20 @@ def deletar_candidatura(request, id):
 
     app.delete()
     return redirect('ihelp:visualizar_candidaturas')
+
+
+@login_required
+def visualizar_meus_anuncios(request):
+    """Visualizar anúncios da ONG logada."""
+    user = request.user
+
+    if user.role != Role.ONG:
+        messages.error(request, "Apenas ONGs podem acessar esta página.")
+        return redirect('ihelp:home_vagas')
+
+    anuncios = PostAnnouncement.objects.filter(ong=user).order_by('-created_at')
+
+    context = {
+        'anuncios': anuncios,
+    }
+    return render(request, 'core/visualizar_meus_anuncios.html', context)

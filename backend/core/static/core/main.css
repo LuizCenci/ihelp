@@ -28,8 +28,16 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
 }
 
-label, h1, h2, h3, h4, h5, h6, p, span, a, .logo {
+label, h1, h2, h3, h4, h5, h6, p, span, .logo {
   color: #000000 !important;
+}
+
+a {
+  color: #000000;
+}
+
+a.bg-blue-600, .bg-blue-600 a, a.bg-blue-600:hover, button.bg-blue-600 {
+  color: #ffffff !important;
 }
 
 .btn {
