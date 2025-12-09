@@ -1,16 +1,56 @@
 {% extends 'core/base.html' %}
+{% block title %}Excluir Post | iHelp{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
+<div class="min-h-[70vh] w-full flex items-center justify-center py-8">
+  <div class="w-full max-w-lg">
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <!-- Header -->
+      <div class="p-6 border-b border-slate-200 bg-red-50">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-slate-800">Excluir Post</h1>
+            <p class="text-sm text-slate-500">Esta ação não pode ser desfeita</p>
+          </div>
+        </div>
+      </div>
 
-    <h3>Tem certeza que deseja excluir este post?</h3>
+      <div class="p-6">
+        <!-- Alert -->
+        <div class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl mb-6">
+          <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          <div class="text-sm">
+            <p class="font-semibold text-amber-800 mb-1">Tem certeza?</p>
+            <p class="text-amber-700">Você está prestes a excluir permanentemente este post do feed.</p>
+          </div>
+        </div>
 
-    <p><strong>{{ post.description }}</strong></p>
+        <!-- Post Content Preview -->
+        <div class="p-4 bg-slate-50 rounded-xl mb-6">
+          <p class="text-sm text-slate-700 line-clamp-4">{{ post.description }}</p>
+        </div>
 
-    <form method="POST">
-        {% csrf_token %}
-        <button class="btn btn-danger">Sim, excluir</button>
-        <a href="{% url 'ihelp:home_feed' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
-
+        <!-- Actions -->
+        <form method="POST" class="flex gap-3">
+          {% csrf_token %}
+          <a href="{% url 'ihelp:home_feed' %}"
+             class="flex-1 px-4 py-3 border border-slate-300 rounded-xl text-center text-slate-700 font-medium hover:bg-slate-50 transition-colors">
+            Cancelar
+          </a>
+          <button type="submit"
+                  class="flex-1 px-4 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+            Excluir post
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

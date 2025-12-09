@@ -2,114 +2,126 @@
 {% load static %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto space-y-6">
-
-  <div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold text-gray-900">Feed de ONGs</h1>
+<div class="max-w-2xl mx-auto">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-xl shadow-sm">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Feed</h1>
+        <p class="text-slate-500 text-sm">Atualizações das ONGs</p>
+      </div>
+    </div>
     {% if request.user.is_authenticated and request.user.role == 'ONG' %}
-      <a href="{% url 'ihelp:criar_post_feed' %}"
-         class="inline-flex items-center px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
-        Criar novo post
+      <a href="{% url 'ihelp:criar_post_feed' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 shadow-sm hover:shadow transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+        Novo Post
       </a>
     {% endif %}
   </div>
 
-  {% for post in posts %}
-    <article class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-      {% if post.photo %}
-      <div class="w-full h-48 overflow-hidden bg-gray-100">
-        <img src="{{ post.get_photo_url }}" alt="{{ post.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" onerror="this.parentElement.innerHTML='<div class=\'w-full h-48 bg-gray-200 flex items-center justify-center\'><svg class=\'w-12 h-12 text-gray-400\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\'/></svg></div>'">
-      </div>
-      {% else %}
-      <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-        </svg>
-      </div>
-      {% endif %}
+  <!-- Posts -->
+  <div class="space-y-6">
+    {% for post in posts %}
+      <article class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <!-- Header do Post -->
+        <div class="p-5 pb-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center flex-shrink-0">
+                <span class="text-white text-sm font-semibold">{{ post.ong.username|slice:":1"|upper }}</span>
+              </div>
+              <div>
+                <h2 class="text-sm font-semibold text-slate-800">{{ post.ong.username }}</h2>
+                <p class="text-xs text-slate-400">{{ post.created_at|date:"d/m/Y" }} às {{ post.created_at|date:"H:i" }}</p>
+              </div>
+            </div>
 
-      <div class="p-5">
-        <!-- Cabeçalho do card -->
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <h2 class="text-base font-semibold text-gray-900">
-              {{ post.ong.username }}
-            </h2>
-            <p class="text-xs text-gray-500">
-              {{ post.created_at|date:"d/m/Y H:i" }}
-            </p>
+            {% if user == post.ong %}
+              <a href="{% url 'ihelp:deletar_post_feed' post.id %}" class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </a>
+            {% endif %}
           </div>
-
-          {% if user == post.ong %}
-            <form action="{% url 'ihelp:deletar_post_feed' post.id %}" method="GET">
-              <button
-                class="inline-flex items-center px-2.5 py-1.5 rounded-md border border-red-200 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100">
-                Excluir
-              </button>
-            </form>
-          {% endif %}
         </div>
 
-        <!-- Conteúdo -->
-        <p class="text-sm text-gray-800 whitespace-pre-line">
-          {{ post.description }}
-        </p>
-      </div>
+        <!-- Imagem -->
+        {% if post.photo %}
+        <div class="w-full aspect-video overflow-hidden bg-slate-100">
+          <img src="{{ post.get_photo_url }}" alt="Post de {{ post.ong.username }}" class="w-full h-full object-cover" onerror="this.parentElement.style.display='none'">
+        </div>
+        {% endif %}
 
-      <div class="border-t border-gray-200 px-5 py-4 space-y-3">
-        <!-- Lista de comentários -->
-        <div>
-          <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-            Comentários ({{ post.comments.count }})
+        <!-- Conteúdo -->
+        <div class="p-5">
+          <p class="text-slate-700 whitespace-pre-line leading-relaxed">{{ post.description }}</p>
+        </div>
+
+        <!-- Comentários -->
+        <div class="border-t border-slate-100 px-5 py-4">
+          <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+            {{ post.comments.count }} comentário{% if post.comments.count != 1 %}s{% endif %}
           </h3>
 
           {% if post.comments.all %}
-            <div class="space-y-2 max-h-56 overflow-y-auto pr-1">
+            <div class="space-y-3 max-h-64 overflow-y-auto mb-4">
               {% for c in post.comments.all %}
-                <div class="border border-gray-200 rounded-lg px-3 py-2 bg-gray-50">
-                  <div class="flex items-center justify-between mb-1">
-                    <span class="text-xs font-semibold text-gray-900">
-                      {{ c.user.username }}
-                    </span>
-                    <span class="text-[11px] text-gray-500">
-                      {{ c.created_at|date:"d/m/Y H:i" }}
-                    </span>
+                <div class="flex gap-3">
+                  <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
+                    <span class="text-slate-600 text-xs font-semibold">{{ c.user.username|slice:":1"|upper }}</span>
                   </div>
-                  <p class="text-sm text-gray-800">
-                    {{ c.content }}
-                  </p>
+                  <div class="flex-1 bg-slate-50 rounded-xl px-4 py-3">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-semibold text-slate-800">{{ c.user.username }}</span>
+                      <span class="text-xs text-slate-400">{{ c.created_at|date:"d/m H:i" }}</span>
+                    </div>
+                    <p class="text-sm text-slate-600">{{ c.content }}</p>
+                  </div>
                 </div>
               {% endfor %}
             </div>
+          {% endif %}
+
+          <!-- Formulário de comentário -->
+          {% if request.user.is_authenticated %}
+            <form action="{% url 'ihelp:comentar_post' post.id %}" method="POST" class="flex gap-3">
+              {% csrf_token %}
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-600 flex items-center justify-center flex-shrink-0">
+                <span class="text-white text-xs font-semibold">{{ request.user.username|slice:":1"|upper }}</span>
+              </div>
+              <div class="flex-1 flex gap-2">
+                <input name="content" type="text" class="flex-1 px-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Escreva um comentário...">
+                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-sm font-medium rounded-xl hover:from-emerald-600 hover:to-cyan-600 transition-all">
+                  Enviar
+                </button>
+              </div>
+            </form>
           {% else %}
-            <p class="text-xs text-gray-500">Nenhum comentário ainda.</p>
+            <p class="text-sm text-slate-500 text-center py-2">
+              <a href="{% url 'ihelp:login' %}" class="text-emerald-600 hover:text-emerald-700 font-medium">Faça login</a> para comentar
+            </p>
           {% endif %}
         </div>
-
-        <!-- Formulário de comentário -->
-        {% if request.user.is_authenticated %}
-          <form action="{% url 'ihelp:comentar_post' post.id %}" method="POST" class="space-y-2">
-            {% csrf_token %}
-            <textarea name="content"
-                      rows="2"
-                      class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Escreva um comentário..."></textarea>
-            <div class="flex justify-end">
-              <button
-                class="inline-flex items-center px-3 py-1.5 rounded-md bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Comentar
-              </button>
-            </div>
-          </form>
-        {% else %}
-          <p class="text-xs text-gray-500">
-            Faça login para comentar.
-          </p>
-        {% endif %}
+      </article>
+    {% empty %}
+      <div class="bg-white border border-slate-200 rounded-2xl p-12 shadow-sm text-center">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-100 to-cyan-100 flex items-center justify-center">
+          <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-800">Nenhuma publicação ainda</h3>
+        <p class="mt-2 text-sm text-slate-500">O feed está vazio. As ONGs ainda não publicaram novidades.</p>
       </div>
-    </article>
-  {% empty %}
-    <p class="text-sm text-gray-600">Ainda não há posts no feed.</p>
-  {% endfor %}
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

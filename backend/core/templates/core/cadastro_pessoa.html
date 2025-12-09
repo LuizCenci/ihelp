@@ -3,90 +3,101 @@
 {% block title %}Cadastro de Voluntário | iHelp{% endblock %}
 {% block content %}
 <div class="min-h-[70vh] w-full flex items-center justify-center py-8">
-  <div class="w-full max-w-lg bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
-    <h1 class="text-2xl font-semibold text-center mb-6 text-green-700">Cadastre-se como Voluntário</h1>
-    <form method="post" class="space-y-4">
-      {% csrf_token %}
-      {% if form.non_field_errors %}
-      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-        {{ form.non_field_errors }}
+  <div class="w-full max-w-lg">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex p-3 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-2xl shadow-lg mb-4">
+        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
       </div>
-      {% endif %}
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.username.label }}</label>
-        {{ form.username|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" }}
-        {% if form.username.errors %}
-        <p class="text-xs text-red-600 mt-1">{{ form.username.errors }}</p>
+      <h1 class="text-2xl font-bold text-slate-800">Cadastre-se como Voluntário</h1>
+      <p class="text-slate-500 mt-1">Preencha seus dados para começar</p>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+      <form method="post" class="space-y-5">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+          <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>{{ form.non_field_errors }}</span>
+        </div>
         {% endif %}
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.email.label }}</label>
-        {{ form.email|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" }}
-        {% if form.email.errors %}
-        <p class="text-xs text-red-600 mt-1">{{ form.email.errors }}</p>
-        {% endif %}
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.phone_number.label }}</label>
-        {{ form.phone_number|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" }}
-        {% if form.phone_number.errors %}
-        <p class="text-xs text-red-600 mt-1">{{ form.phone_number.errors }}</p>
-        {% endif %}
-      </div>
-      <div class="grid gap-4 grid-cols-1 sm:grid-cols-3">
+
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.country.label }}</label>
-          {{ form.country|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" }}
-          {% if form.country.errors %}
-          <p class="text-xs text-red-600 mt-1">{{ form.country.errors }}</p>
-          {% endif %}
+          <label class="block text-sm font-medium text-slate-700 mb-2">{{ form.username.label }}</label>
+          {{ form.username|add_class:"w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow" }}
+          {% if form.username.errors %}<p class="text-xs text-red-600 mt-1.5">{{ form.username.errors }}</p>{% endif %}
         </div>
+
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.state.label }}</label>
-          {{ form.state|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" }}
-          {% if form.state.errors %}
-          <p class="text-xs text-red-600 mt-1">{{ form.state.errors }}</p>
-          {% endif %}
+          <label class="block text-sm font-medium text-slate-700 mb-2">{{ form.email.label }}</label>
+          {{ form.email|add_class:"w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow" }}
+          {% if form.email.errors %}<p class="text-xs text-red-600 mt-1.5">{{ form.email.errors }}</p>{% endif %}
         </div>
+
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.city.label }}</label>
-          {{ form.city|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" }}
-          {% if form.city.errors %}
-          <p class="text-xs text-red-600 mt-1">{{ form.city.errors }}</p>
-          {% endif %}
+          <label class="block text-sm font-medium text-slate-700 mb-2">{{ form.phone_number.label }}</label>
+          {{ form.phone_number|add_class:"w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow" }}
+          {% if form.phone_number.errors %}<p class="text-xs text-red-600 mt-1.5">{{ form.phone_number.errors }}</p>{% endif %}
         </div>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.cpf.label }}</label>
-        {{ form.cpf|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" }}
-        {% if form.cpf.errors %}
-        <p class="text-xs text-red-600 mt-1">{{ form.cpf.errors }}</p>
-        {% endif %}
-      </div>
-      <div class="grid gap-4 grid-cols-1 sm:grid-cols-2">
+
+        <div class="grid gap-4 grid-cols-1 sm:grid-cols-3">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">{{ form.country.label }}</label>
+            {{ form.country|add_class:"w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow" }}
+            {% if form.country.errors %}<p class="text-xs text-red-600 mt-1.5">{{ form.country.errors }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">{{ form.state.label }}</label>
+            {{ form.state|add_class:"w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow" }}
+            {% if form.state.errors %}<p class="text-xs text-red-600 mt-1.5">{{ form.state.errors }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">{{ form.city.label }}</label>
+            {{ form.city|add_class:"w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow" }}
+            {% if form.city.errors %}<p class="text-xs text-red-600 mt-1.5">{{ form.city.errors }}</p>{% endif %}
+          </div>
+        </div>
+
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.password1.label }}</label>
-          {{ form.password1|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" }}
-          {% if form.password1.errors %}
-          <p class="text-xs text-red-600 mt-1">{{ form.password1.errors }}</p>
-          {% endif %}
+          <label class="block text-sm font-medium text-slate-700 mb-2">{{ form.cpf.label }}</label>
+          {{ form.cpf|add_class:"w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow" }}
+          {% if form.cpf.errors %}<p class="text-xs text-red-600 mt-1.5">{{ form.cpf.errors }}</p>{% endif %}
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.password2.label }}</label>
-          {{ form.password2|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" }}
-          {% if form.password2.errors %}
-          <p class="text-xs text-red-600 mt-1">{{ form.password2.errors }}</p>
-          {% endif %}
+
+        <div class="grid gap-4 grid-cols-1 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">{{ form.password1.label }}</label>
+            {{ form.password1|add_class:"w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow" }}
+            {% if form.password1.errors %}<p class="text-xs text-red-600 mt-1.5">{{ form.password1.errors }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">{{ form.password2.label }}</label>
+            {{ form.password2|add_class:"w-full border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow" }}
+            {% if form.password2.errors %}<p class="text-xs text-red-600 mt-1.5">{{ form.password2.errors }}</p>{% endif %}
+          </div>
         </div>
+
+        <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
+          {{ form.accept_announcements|add_class:"w-5 h-5 text-emerald-600 border-slate-300 rounded focus:ring-2 focus:ring-emerald-500" }}
+          <label class="text-sm text-slate-700 cursor-pointer">{{ form.accept_announcements.label }}</label>
+        </div>
+
+        <button type="submit" class="w-full mt-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-sm hover:shadow transition-all">
+          Criar conta
+        </button>
+      </form>
+
+      <div class="mt-6 pt-6 border-t border-slate-200 text-center">
+        <p class="text-sm text-slate-500">
+          Já tem uma conta?
+          <a href="{% url 'ihelp:login' %}" class="text-emerald-600 hover:text-emerald-700 font-medium">Fazer login</a>
+        </p>
       </div>
-      <div class="flex items-center gap-2 pt-2">
-        {{ form.accept_announcements|add_class:"w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-2 focus:ring-green-500" }}
-        <label class="text-sm text-gray-700 cursor-pointer">{{ form.accept_announcements.label }}</label>
-      </div>
-      <button type="submit" class="w-full mt-4 px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">Cadastrar</button>
-    </form>
-    <div class="mt-6 text-center text-sm text-gray-600">
-      Já tem conta? <a href="{% url 'ihelp:login' %}" class="text-green-700 hover:text-green-800 font-medium hover:underline">Entrar</a>
     </div>
   </div>
 </div>

@@ -3,48 +3,73 @@
 
 {% block content %}
 <div class="min-h-[70vh] w-full flex items-center justify-center py-8">
-  <div class="w-full max-w-2xl bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
-    <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-semibold text-red-600">Excluir Anúncio</h1>
-      <a href="{% url 'ihelp:home_vagas' %}" class="text-gray-400 hover:text-gray-600 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </a>
-    </div>
+  <div class="w-full max-w-lg">
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <!-- Header -->
+      <div class="p-6 border-b border-slate-200 bg-red-50">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-slate-800">Excluir Anúncio</h1>
+            <p class="text-sm text-slate-500">Esta ação não pode ser desfeita</p>
+          </div>
+        </div>
+      </div>
 
-    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-      <p class="font-semibold mb-1">Atenção!</p>
-      <p class="mb-1">
-        Você está prestes a excluir o anúncio:
-        <span class="font-semibold">"{{ post.title }}"</span>
-      </p>
-      <p>Esta ação é permanente e não poderá ser desfeita.</p>
-    </div>
+      <div class="p-6">
+        <!-- Alert -->
+        <div class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl mb-6">
+          <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          <div class="text-sm">
+            <p class="font-semibold text-amber-800 mb-1">Tem certeza?</p>
+            <p class="text-amber-700">Você está prestes a excluir permanentemente o anúncio <span class="font-semibold">"{{ post.title }}"</span></p>
+          </div>
+        </div>
 
-    {% if post.get_photo_url %}
-    <div class="mb-5">
-      <img src="{{ post.get_photo_url }}" alt="Imagem do anúncio"
-           class="max-h-64 rounded-xl border border-gray-200 object-cover w-full">
-    </div>
-    {% endif %}
+        <!-- Image Preview -->
+        {% if post.get_photo_url %}
+        <div class="mb-6">
+          <img src="{{ post.get_photo_url }}" alt="Imagem do anúncio"
+               class="w-full h-48 rounded-xl border border-slate-200 object-cover">
+        </div>
+        {% endif %}
 
-    <div class="mb-5 space-y-1 text-sm text-gray-700">
-      <p><span class="font-semibold">Status:</span> {{ post.get_status_display|default:post.status }}</p>
-      <p><span class="font-semibold">Criado em:</span> {{ post.created_at|date:"d/m/Y H:i" }}</p>
-    </div>
+        <!-- Info -->
+        <div class="p-4 bg-slate-50 rounded-xl space-y-2 mb-6">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500">Status</span>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+              {% if post.status == 'ABERTA' %}bg-emerald-100 text-emerald-700
+              {% else %}bg-slate-100 text-slate-600{% endif %}">
+              {{ post.get_status_display|default:post.status }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500">Criado em</span>
+            <span class="text-slate-700 font-medium">{{ post.created_at|date:"d/m/Y H:i" }}</span>
+          </div>
+        </div>
 
-    <form method="POST" class="flex gap-3 pt-2">
-      {% csrf_token %}
-      <button type="submit"
-              class="flex-1 px-4 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
-        Confirmar exclusão
-      </button>
-      <a href="{% url 'ihelp:post_page' post.id %}"
-         class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-center text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
-        Cancelar
-      </a>
-    </form>
+        <!-- Actions -->
+        <form method="POST" class="flex gap-3">
+          {% csrf_token %}
+          <a href="{% url 'ihelp:post_page' post.id %}"
+             class="flex-1 px-4 py-3 border border-slate-300 rounded-xl text-center text-slate-700 font-medium hover:bg-slate-50 transition-colors">
+            Cancelar
+          </a>
+          <button type="submit"
+                  class="flex-1 px-4 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+            Excluir anúncio
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

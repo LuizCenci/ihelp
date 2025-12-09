@@ -1,67 +1,113 @@
 {% extends 'core/base.html' %}
-{% block title %}iHelp – Buscar Ações{% endblock %}
+{% block title %}iHelp – Vagas de Voluntariado{% endblock %}
 {% block content %}
-<div class="w-full">
-  <div class="flex justify-center mb-8">
-    <form method="get" class="bg-white shadow-md rounded-xl flex flex-col md:flex-row gap-3 w-full max-w-6xl p-6 border border-gray-200">
-      <input
-        type="text"
-        name="q"
-        value="{{ request.GET.q }}"
-        class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        placeholder="Buscar por palavra-chave..."
-        autocomplete="off"
-      />
-      <select name="tipo" class="min-w-[200px] border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
-        <option value="">Tipo (Todos)</option>
-        <option value="voluntariado" {% if request.GET.tipo == 'voluntariado' %}selected{% endif %}>Voluntariado</option>
-        <option value="doacao" {% if request.GET.tipo == 'doacao' %}selected{% endif %}>Doação</option>
-        <option value="adocao" {% if request.GET.tipo == 'adocao' %}selected{% endif %}>Adoção</option>
-      </select>
-      <select name="ods" class="min-w-[200px] border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
-        <option value="">Categoria ODS (Todas)</option>
-        <option value="ods1" {% if request.GET.ods == 'ods1' %}selected{% endif %}>ODS 1</option>
-      </select>
-      <button type="submit" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-        Buscar
-      </button>
+<div class="w-full max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center gap-3 mb-2">
+      <div class="p-2.5 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-xl shadow-sm">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Vagas de Voluntariado</h1>
+        <p class="text-slate-500 text-sm">Encontre oportunidades para fazer a diferença</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Form -->
+  <div class="mb-8">
+    <form method="get" action="{% url 'ihelp:search' %}" class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+      <div class="flex flex-col lg:flex-row gap-4">
+        <div class="flex-1 relative">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <input
+            type="text"
+            name="q"
+            value="{{ request.GET.q }}"
+            class="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow text-slate-800 placeholder-slate-400"
+            placeholder="Buscar por palavra-chave, ONG ou cidade..."
+            autocomplete="off"
+          />
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <select name="ods" class="min-w-[180px] px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white text-slate-700">
+            <option value="">Todas categorias</option>
+            {% for cat in ods_categories %}
+            <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" in selected_ods %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-sm hover:shadow transition-all">
+            <span class="flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              Buscar
+            </span>
+          </button>
+        </div>
+      </div>
     </form>
   </div>
   
+  <!-- Results Grid -->
   <div class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
     {% for anuncio in anuncios %}
-    <a href="{% url 'ihelp:post_page' anuncio.id %}" class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200 group flex flex-col">
+    <a href="{% url 'ihelp:post_page' anuncio.id %}" class="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg hover:border-emerald-300 transition-all duration-300 group flex flex-col">
       {% if anuncio.photo %}
-      <div class="w-full h-48 overflow-hidden bg-gray-100">
-        <img src="{{ anuncio.get_photo_url }}" alt="{{ anuncio.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" onerror="this.parentElement.innerHTML='<div class=\'w-full h-48 bg-gray-200 flex items-center justify-center\'><svg class=\'w-12 h-12 text-gray-400\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\'/></svg></div>'">
+      <div class="w-full h-48 overflow-hidden bg-slate-100">
+        <img src="{{ anuncio.get_photo_url }}" alt="{{ anuncio.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.parentElement.innerHTML='<div class=\'w-full h-48 bg-slate-100 flex items-center justify-center\'><svg class=\'w-12 h-12 text-slate-300\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\'/></svg></div>'">
       </div>
       {% else %}
-      <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+      <div class="w-full h-48 bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center">
+        <svg class="w-16 h-16 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
         </svg>
       </div>
       {% endif %}
-      <div class="p-6 flex-1 flex flex-col">
-        <h3 class="text-xl font-semibold mb-2 text-gray-900 group-hover:text-blue-600 transition-colors">{{ anuncio.title }}</h3>
-        <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1">{{ anuncio.description|truncatewords:25 }}</p>
+      <div class="p-5 flex-1 flex flex-col">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
+            Aberta
+          </span>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-800 group-hover:text-emerald-600 transition-colors mb-2">{{ anuncio.title }}</h3>
+        <p class="text-slate-500 text-sm leading-relaxed line-clamp-3 flex-1">{{ anuncio.description|truncatewords:20 }}</p>
         {% if anuncio.ong %}
-        <p class="text-xs text-gray-500 mt-4 pt-4 border-t border-gray-100">Por: {{ anuncio.ong.username }}</p>
+        <div class="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center flex-shrink-0">
+            <span class="text-white text-xs font-semibold">{{ anuncio.ong.username|slice:":1"|upper }}</span>
+          </div>
+          <span class="text-sm text-slate-600 font-medium">{{ anuncio.ong.username }}</span>
+        </div>
         {% endif %}
       </div>
     </a>
     {% empty %}
-    <div class="col-span-full text-center py-16">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      <p class="text-lg font-medium text-gray-700 mb-2">Nenhum anúncio encontrado.</p>
-      <p class="text-sm text-gray-500 mb-6">Tente ajustar os filtros de busca ou criar um novo anúncio.</p>
-      {% if request.user.is_authenticated and request.user.role == 'ONG' %}
-      <a href="{% url 'ihelp:criacao_post_vaga' %}" class="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-        Criar primeiro anúncio
-      </a>
-      {% endif %}
+    <div class="col-span-full">
+      <div class="bg-white border border-slate-200 rounded-2xl p-12 shadow-sm text-center">
+        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-emerald-100 to-cyan-100 flex items-center justify-center">
+          <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-slate-800 mb-2">Nenhuma vaga encontrada</h3>
+        <p class="text-slate-500 max-w-md mx-auto mb-6">Tente ajustar os filtros de busca ou volte mais tarde para encontrar novas oportunidades.</p>
+        {% if request.user.is_authenticated and request.user.role == 'ONG' %}
+        <a href="{% url 'ihelp:criacao_post_vaga' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-cyan-600 shadow-sm hover:shadow transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          </svg>
+          Criar primeira vaga
+        </a>
+        {% endif %}
+      </div>
     </div>
     {% endfor %}
   </div>
