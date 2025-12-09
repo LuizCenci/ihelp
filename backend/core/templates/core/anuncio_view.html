@@ -2,7 +2,7 @@
 {% block title %}{{ anuncio.title }} | iHelp{% endblock %}
 {% block content %}
 <div class="max-w-4xl mx-auto">
-  <a href="{% url 'ihelp:home' %}" class="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors group">
+  <a href="{% url 'ihelp:home_vagas' %}" class="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors group">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
     </svg>
@@ -50,6 +50,14 @@
       </span>
     </div>
     {% endif %}
+    {% if request.user.is_authenticated and request.user == anuncio.ong %}
+      <a href="{% url 'ihelp:editar_post_vaga' anuncio.id %}" class="btn btn-warning mt-3">
+          Editar Post
+      </a>
+      <a href="{% url 'ihelp:deletar_post_vaga' anuncio.id %}" class="btn btn-danger">Excluir</a>
+    {% endif %}
+
   </article>
+    
 </div>
 {% endblock %}

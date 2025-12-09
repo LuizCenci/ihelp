@@ -223,23 +223,17 @@ class PostAnnouncementForm(forms.ModelForm):
         widget=forms.SelectMultiple(attrs={'class': 'form-control'})
     )
 
-    def save(self, commit=True, ong=None, status='ABERTA'):
-        with transaction.atomic():
-            post = super().save(commit=False)
-            if ong is not None:
-                post.ong = ong
-            if status:
-                post.status = status
-            if commit:
-                # Salvar o post (isso também salva o arquivo de imagem automaticamente)
-                post.save()
-                # Salvar categorias
-                selected = list(self.cleaned_data.get('categories', []))
-                PostCategory.objects.filter(post=post).delete()
-                PostCategory.objects.bulk_create(
-                    [PostCategory(post=post, category=c) for c in selected]
-                )
-            return post
+    def save(self, commit=True, ong=None):
+        post = super().save(commit=False)
+
+        if ong is not None:
+            post.ong = ong
+
+        if commit:
+            post.save()
+            self.save_m2m()
+
+        return post
 
 
 # ============================================

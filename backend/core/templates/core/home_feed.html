@@ -1,0 +1,65 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2>Feed de ONGs</h2>
+
+    
+
+    <!-- LISTA DE POSTS -->
+    {% for post in posts %}
+        <div class="card mb-4 shadow-sm">
+
+            {% if post.photo %}
+            <img src="{{ post.photo }}" class="card-img-top" style="max-height: 350px; object-fit: cover;">
+            {% endif %}
+
+            <div class="card-body">
+                <h5 class="card-title">{{ post.ong.username }}</h5>
+                <p class="text-muted" style="font-size: 0.9rem;">
+                    {{ post.created_at|date:"d/m/Y H:i" }}
+                </p>
+
+                <p class="card-text">{{ post.description }}</p>
+
+                {% if user == post.ong %}
+                    <form action="{% url 'ihelp:deletar_post_feed' post.id %}" method="GET">
+                        <button class="btn btn-danger btn-sm">Excluir</button>
+                    </form>
+                {% endif %}
+            </div>
+
+            <hr>
+
+            <!-- COMENTÁRIOS -->
+            <div class="px-3 pb-3">
+
+                <h6>Comentários ({{ post.comments.count }})</h6>
+
+                {% for c in post.comments.all %}
+                    <div class="border rounded p-2 mb-2">
+                        <strong>{{ c.user.username }}</strong>
+                        <p class="mb-0">{{ c.content }}</p>
+                        <span class="text-muted" style="font-size: 0.8rem;">
+                            {{ c.created_at|date:"d/m/Y H:i" }}
+                        </span>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Nenhum comentário ainda.</p>
+                {% endfor %}
+
+                <!-- FORMULÁRIO DE COMENTAR -->
+                <form action="{% url 'ihelp:comentar_post' post.id %}" method="POST">
+                    {% csrf_token %}
+                    {{ comment_form }}
+                    <button class="btn btn-primary btn-sm mt-2">Comentar</button>
+                </form>
+
+            </div>
+
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

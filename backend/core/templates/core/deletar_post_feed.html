@@ -1,0 +1,16 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+    <h3>Tem certeza que deseja excluir este post?</h3>
+
+    <p><strong>{{ post.description }}</strong></p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button class="btn btn-danger">Sim, excluir</button>
+        <a href="{% url 'ihelp:home_feed' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+</div>
+{% endblock %}

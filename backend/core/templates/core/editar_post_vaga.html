@@ -1,0 +1,61 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2 class="mb-4">Editar Postagem</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- TÍTULO -->
+        <div class="mb-3">
+            <label class="form-label">Título</label>
+            {{ form.title }}
+        </div>
+
+        <!-- DESCRIÇÃO -->
+        <div class="mb-3">
+            <label class="form-label">Descrição</label>
+            {{ form.description }}
+        </div>
+
+        <!-- STATUS -->
+        <div class="mb-3">
+            <label class="form-label">Status da Vaga</label>
+            {{ form.status }}
+        </div>
+
+        <!-- IMAGEM ATUAL -->
+        <div class="mb-3">
+            <label class="form-label">Imagem atual</label><br>
+
+            {% if form.instance.get_photo_url %}
+                <img src="{{ form.instance.get_photo_url }}" 
+                     alt="Imagem atual" 
+                     style="max-width: 300px; border-radius: 8px; display:block; margin-bottom:10px;">
+            {% else %}
+                <p>Nenhuma imagem enviada.</p>
+            {% endif %}
+        </div>
+
+        <!-- ALTERAR FOTO -->
+        <div class="mb-3">
+            <label class="form-label">Alterar imagem</label>
+            {{ form.photo }}
+        </div>
+
+        <!-- CATEGORIAS -->
+        <div class="mb-3">
+            <label class="form-label">Categorias</label>
+            {{ form.categories }}
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
+    </form>
+
+</div>
+
+{% endblock %}

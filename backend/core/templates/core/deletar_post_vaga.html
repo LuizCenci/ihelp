@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <h2 class="mb-4">Excluir Postagem</h2>
+
+    <div class="alert alert-danger">
+        <strong>Atenção!</strong> Você está prestes a excluir o anúncio:
+        <br>
+        <strong>{{ post.title }}</strong>
+        <br><br>
+        Esta ação é permanente e não poderá ser desfeita.
+    </div>
+
+    {% if post.get_photo_url %}
+        <img src="{{ post.get_photo_url }}" alt="Imagem do Post"
+             class="img-fluid mb-4" style="max-height: 250px; border-radius: 6px;">
+    {% endif %}
+
+    <p><strong>Status:</strong> {{ post.status }}</p>
+    <p><strong>Criado em:</strong> {{ post.created_at|date:"d/m/Y H:i" }}</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+            Confirmar Exclusão
+        </button>
+
+        <a href="{% url 'ihelp:post_page' post.id %}" class="btn btn-secondary">
+            Cancelar
+        </a>
+    </form>
+
+</div>
+{% endblock %}
