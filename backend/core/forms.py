@@ -208,7 +208,7 @@ class CategoryForm(forms.ModelForm):
 class PostAnnouncementForm(forms.ModelForm):
     class Meta:
         model = PostAnnouncement
-        fields = ['title', 'description', 'photo', 'status']
+        fields = ['title', 'description', 'photo', 'status', 'link_forms']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),

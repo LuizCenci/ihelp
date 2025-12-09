@@ -79,6 +79,44 @@
       </a>
     </div>
     {% endif %}
+
+
+
+
+
+
+    {# Botões de candidatura para usuários que NÃO são a ONG dona do anúncio #}
+    {% if request.user.is_authenticated and request.user != anuncio.ong %}
+      <div class="mt-8">
+        {% if already_applied %}
+          <p class="text-green-700 font-medium">
+            Você já se candidatou para esta vaga.
+          </p>
+        {% else %}
+          {% if anuncio.link_forms %}
+            <div class="flex flex-wrap gap-3">
+              <a href="{{ anuncio.link_forms }}" target="_blank"
+                 class="inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                Ir para o formulário
+              </a>
+
+              <form action="{% url 'ihelp:confirmar_candidatura' anuncio.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit"
+                        class="inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700 transition-colors">
+                  Já me candidatei
+                </button>
+              </form>
+            </div>
+          {% else %}
+            <p class="text-gray-500 text-sm">Esta vaga ainda não tem um formulário de candidatura.</p>
+          {% endif %}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    
+
   </article>
 </div>
 {% endblock %}

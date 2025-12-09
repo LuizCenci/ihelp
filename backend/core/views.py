@@ -89,7 +89,32 @@ def home_vagas(request):
 #VISUALIZAÇÃO DE POST
 def post_page(request, id):
     anuncio = get_object_or_404(PostAnnouncement, pk=id)
-    return render(request, 'core/anuncio_view.html', {'anuncio': anuncio})
+
+    already_applied = False
+    if request.user.is_authenticated and request.user.role == "VOLUNTEER":
+        already_applied = Application.objects.filter(
+            post=anuncio,
+            volunteer=request.user,
+        ).exists()
+
+    context = {
+    'anuncio': anuncio,
+    'already_applied': already_applied,}
+    
+
+    return render(request, 'core/anuncio_view.html', context)
+
+@login_required
+def confirmar_candidatura(request, id):
+    anuncio = get_object_or_404(PostAnnouncement, pk=id)
+
+    Application.objects.get_or_create(
+        post=anuncio,
+        volunteer=request.user,
+        defaults={'status': 'PENDENTE'},
+    )
+
+    return redirect('ihelp:post_page', id=anuncio.id)
 
 #BUSCA POR ANUNCIO
 def search(request):
@@ -134,6 +159,7 @@ def criacao_post_vaga(request):
         form = PostAnnouncementForm()
 
     return render(request, 'core/criacao_post_vaga.html', {'form': form})
+
 
 @login_required
 def editar_post_vaga(request, id):
